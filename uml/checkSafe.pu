@@ -1,0 +1,39 @@
+@startuml check safe
+actor user
+participant server as serv
+database dataManager as db
+participant compiler as cmp
+participant runner as run
+user->serv:check safe
+serv->db:get safe and key text(user)
+db-->serv:safe text,key text
+serv->cmp:compile safe(safe text)
+cmp->cmp:compile safe(safe text)
+alt compiled
+    cmp-->serv:safe bytecode
+    serv->run:run comp(safe,idle key)
+    run-->serv:winner
+    alt winner==safe
+        serv->cmp:compile key(key text)
+        cmp->cmp:compile key
+        alt compiled
+            cmp-->serv:key bytecode
+            serv->run:run comp(safe,key)
+            run-->winner
+            alt winner==key
+                serv-->user:the safe is ok
+            else winner==safe
+                serv-->user:the key can't crack the safe, give other key
+            end
+        else key not compiled
+            com-->serv:compilation error(nasm error)
+            serv-->user:the key has compilation problem(nasm output)
+        end
+    else winner==key
+        serv-->user:safe losing to idle key
+    end
+else safe not compiled
+    com-->serv:compilation error(nasm error)
+    serv-->user:the safe has compilation error(nasm output)
+end
+@enduml

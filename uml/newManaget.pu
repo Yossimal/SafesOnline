@@ -1,0 +1,11 @@
+@startuml login
+actor mainManager as man
+participant server as serv
+database dataManager as db
+
+man -> serv:createManager(token,managerData)
+serv -> serv:varifyTocken(token)
+serv -> db:insertManager(data)
+db -->serv:newTocken
+serv -->man:newToken
+@enduml

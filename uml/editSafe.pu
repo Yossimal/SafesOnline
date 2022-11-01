@@ -1,0 +1,11 @@
+@startuml edit safe
+actor user
+participant server as serv
+database dataManager as db
+
+user->serv:save changes(data)
+serv->db:store text(user,data)
+db-->serv:ok
+serv-->user:ok
+
+@enduml

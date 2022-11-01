@@ -1,0 +1,39 @@
+{
+  "paths": {
+    "SAFES_CODE_PATH": "./codes/safes/",
+    "SAFES_COMPILED_PATH": "./codes/compiled_safes/",
+    "NASM_PATH": ",\"C:\\Program Files\\NASM\\nasm.exe\"",
+    "KEYS_CODE_PATH": "./codes/keys/",
+    "KEYS_COMPILED_PATH": "codes/compiled_keys/",
+    "CORE_WARS_PATH": "./runner/corewars.jar",
+    "JAVA_PATH": "./runner/jdk/bin/java.exe",
+    "GOOGLE_APPLICATION_CREDENTIALS":"./safes-archi-firebase-adminsdk-jmjgr-3a5a1992df.json"
+  },
+  "server": {
+    "port": 8080,
+    "post": {
+      "paths": {
+        "lock": "/lock",
+        "unlock": "/unlock",
+        "uploadSafe": "/uploads/safes",
+        "uploadKey": "/uploads/keys",
+        "play": "/play"
+      }
+    },
+    "get": {
+      "paths": {
+        "lockStatus": "/status/lock/:what",
+        "allSafes": "/safes/all",
+        "getSafeBinary": "/safes/file/:safe"
+      }
+    }
+  },
+  "firebase": {
+    "storage": {
+      "fileTypes": {
+        "binary": {"name": "binary","extension": ""},
+        "assembly":{"name": "assembly","extension": ".asm"}
+      }
+    }
+  }
+}

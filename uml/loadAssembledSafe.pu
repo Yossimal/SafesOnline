@@ -1,0 +1,12 @@
+@startuml load assembled safe
+
+actor user
+participant server as serv
+database dataManager as db
+
+user->serv:download safe of user(user)
+serv->db:load bytecode of safe of user(user)
+db-->serv:safe bytecode
+serv->serv:generate file from bytes
+serv-->user:safe file download
+@enduml

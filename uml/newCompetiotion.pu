@@ -1,0 +1,12 @@
+@startuml new competiotion
+actor manager as man
+participant server as serv
+database dataManager as db
+
+man -> serv:addCompetiotion(token,data)
+serv->serv:checkToken(token)
+serv->db:insertCompetiotion(comp)
+db-->serv:competiotionToken
+serv-->man:competiotionToken
+
+@enduml

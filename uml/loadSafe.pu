@@ -1,0 +1,18 @@
+@startuml load safe
+
+actor user
+participant server as serv
+database DataManager as db
+
+user->serv:loadSafeAndKey(userToken,safeNumber)
+serv->db:get user(userToken)
+db-->serv:token
+serv->db:get user safe(userToken,safeNumber)
+alt safe exists
+    db-->serv:safe and key data
+    serv-->user:safe and key data
+else safe do not exists
+    db-->serv:not exists error
+    serv-->user:safe not exists error
+end
+@enduml

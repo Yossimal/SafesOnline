@@ -1,0 +1,17 @@
+@startuml open safe for edit
+    actor user
+    participant server as serv
+    database dataManager as db
+
+    user->serv:read user last edit(token)
+    serv->db:get user by token
+    db-->serv:user
+    serv->db:get user code
+    alt code exists
+        db-->serv:user code
+        serv-->user:usercode
+    else code not exists
+        db-->serv:no code for the user
+        serv-->user:no code, start new safe
+    end
+@enduml

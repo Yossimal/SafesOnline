@@ -1,0 +1,16 @@
+@startuml check access
+actor user
+participant server as serv
+database dataManager as db
+
+user->serv:request(token)
+serv->db:get user by token(token)
+db-->serv:user
+serv->serv:check credentials(user)
+alt has credentials
+    serv->serv:handle request
+    serv-->user:response
+else no credentials
+    serv-->user:bad credentials error
+end
+@enduml
