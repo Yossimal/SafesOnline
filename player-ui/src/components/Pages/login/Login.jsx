@@ -20,6 +20,12 @@ function Login(){
     const authContext = useContext(AuthContext);
 
     useEffect(()=>{
+        if(authContext.isLoggedIn){
+            navigate(pagesPaths.home)
+        }
+    },[authContext.isLoggedIn])
+
+    useEffect(()=>{
         if(msg!=null&&msg!=''){
             window.alert(msg)
         }

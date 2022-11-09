@@ -1,29 +1,36 @@
 import './App.css';
-import { useRef } from 'react';
-import {sha256} from 'js-sha256'
-
-
+import { useContext } from 'react';
+import { AuthContext } from './context/auth-context/auth-context';
+import {BrowserRouter,Routes,Route} from "react-router-dom";
+import Login from './components/Pages/login/Login';
+import Home from './components/Pages/home/Home';
+import Register from './components/Pages/register/Register';
+import EmailConfirm from './components/Pages/emailConfirm/EmailConfirm';
+import PrivateSection from './components/controls/PrivateSection/PrivateSection';
+import TopNavbar from './components/controls/topNavbar/TopNavbar';
 
 
 function App() {
 
-    const password = useRef();
-    const userName = useRef();
-    function sendForm(){
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userName:"yossi",fullName:"Yosef Malka",password:sha256("qq11qq11"),email:"yosef.malka@gmail.com" })
-        };
-        fetch('http://localhost:8080/register', requestOptions)
-            .then(response => response.json())
-            .then(data => {console.log(data)});
-    }
+    const authContext = useContext(AuthContext)
+    const browserRouter = (
+
+        <BrowserRouter>
+        <Routes>
+          <Route index element={<Login/>}/>
+          <Route path="home" element={<PrivateSection><Home/></PrivateSection>}/>
+          <Route path="register" element={<Register/>}/>
+          <Route path="confirm/:token" element={<EmailConfirm />}/>
+        </Routes>
+        </BrowserRouter>
+      )
+
 
   
     return (
         <>
-
+        {authContext.isLoggedIn&&<TopNavbar />}
+        {browserRouter}
         </>
     );
 }

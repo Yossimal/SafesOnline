@@ -37,6 +37,10 @@
     "port": 8080,
     "url":"https://localhost:8080",
     "post": {
+      "authParams":{
+        "userId":"userId",
+        "token":"token"
+      },
       "paths": {
         "lock": "/lock",
         "unlock": "/unlock",
@@ -67,6 +71,34 @@
         },
         "checkToken":{
           "path":"/check-token",
+          "params":{
+            "token":"token",
+            "userId":"userId"
+          }
+        },
+        "getUserProfile":{
+          "path":"/get-user-profile",
+          "params":{
+            "token":"token",
+            "userId":"userId"
+          },
+          "responseSchema":{
+            "userName":"userName",
+            "presentName":"fullName",
+            "email":"email"
+          }
+        },
+        "changePassword":{
+          "path":"/update-password",
+          "params":{
+            "oldPassword":"oldPassword",
+            "newPassword":"newPassword",
+            "userId":"userId",
+            "token":"token"
+          }
+        },
+        "logOut":{
+          "path":"/log-out",
           "params":{
             "token":"token",
             "userId":"userId"

@@ -1,8 +1,10 @@
 import { InputGroup,Form, FormGroup, Button } from 'react-bootstrap'
-import {useState} from 'react'
+import {useState,useEffect,useContext} from 'react'
 import { requestPost } from '../../../common/request'
 import {serverUrl,serverPaths,pagesPaths} from "../../../common/config.js"
 import {sha256} from 'js-sha256'
+import { AuthContext } from '../../../context/auth-context/auth-context'
+import {useNavigate} from 'react-router'
 
 function RegisterInput(props){
     function updateInput(setter){
@@ -19,21 +21,37 @@ function RegisterInput(props){
 }
 
 export default function Register(){
-
+    const authContext = useContext(AuthContext)
+    const navigate = useNavigate()
     const [userName,setUserName] = useState("")
     const [password,setPassword] = useState("")
     const [confirmPassword,setConfirmPassword] = useState("")
     const [email,setEmail] = useState("")
     const [fullName,setFullName] = useState("")
 
-    function checkForm(){
 
+    useEffect(()=>{
+        if(authContext.isLoggedIn){
+            navigate('..',{relative:true})
+        }
+    },[])
+
+    function checkForm(){
+        if(password!==confirmPassword){
+            return {ok:false,msg:"confirm password not match the password"};
+        }else if(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)){
+            return {ok:false,msg:"password must contain 6 characters, at least one letter and one number"};
+        }else if(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(email)){
+            return {ok:false,msg:"invalid email"}
+        }else{
+            return {ok:true}
+        }
     }
 
     function handleRegister(){
-        const error = checkForm()
-        if(error!=null){
-            window.alert(error);
+        const ok = checkForm()
+        if(!ok.ok){
+            window.alert(ok.msg);
             return;
         }
         const body = {
@@ -48,9 +66,9 @@ export default function Register(){
                     window.alert(res.error)
                 }
                 else{
-                    console.log(res)
+                    navigate('..',{relative:true})
                 }
-            })
+            });
 
     }
     

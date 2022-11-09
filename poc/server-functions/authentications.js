@@ -1,5 +1,5 @@
 import {createRequire} from "module"
-import {generateToken} from "../mongo/schemes/LoginToken.js"
+import {generateToken, removeToken} from "../mongo/schemes/LoginToken.js"
 import User,{addUser} from "../mongo/schemes/User.js"
 import nodemailer from 'nodemailer'
 import fs from 'fs'
@@ -88,4 +88,13 @@ export async function checkToken(req,res){
     const userId = req.body[params.userId];
     const token = req.body[params.token];
     return res.send(await {isRegistered:checkLoginToken(token,userId)})
+}
+
+export async function logOut(req,res){
+    const params = config.server.post.paths.logOut.params;
+    const userId = params.userId;
+    const token = params.token;
+    removeToken(userId,token)
+        .then(ok=>ok?{loggedOut:true}:{loggedOut:false})
+    
 }

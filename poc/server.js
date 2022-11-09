@@ -3,9 +3,10 @@ import {exec} from "child_process";
 import {resolve} from "path";
 import express from "express";
 import {createRequire} from "module"
-import bodyParser from "body-parser";
 import cors from 'cors'
-import { checkToken, confirmEmail, login, register } from "./server-functions/authentications.js";
+import { checkToken, confirmEmail, login, logOut, register } from "./server-functions/authentications.js";
+import { changePassword, getUserProfile } from "./server-functions/user.js";
+import { $private } from "./server-functions/common.js";
 
 const require = createRequire(import.meta.url)
 const config = require('./config.json')
@@ -34,7 +35,12 @@ function runServer() {
     app.post(paths.login.path,login);
     app.post(paths.register.path,register);
     app.post(paths.confirm.path,confirmEmail);
-    app.post(paths.checkToken.path,checkToken)
+    app.post(paths.checkToken.path,checkToken);
+    app.post(paths.logOut.path,logOut);
+    app.post(paths.getUserProfile.path,$private(getUserProfile))
+    app.post(paths.changePassword.path,$private(changePassword))
+
+
 
 
     app.get('/', (req, res) => {

@@ -2,6 +2,7 @@ import { sha256 } from "js-sha256";
 import { Schema,model,ObjectId } from "mongoose";
 import moment from 'moment'
 import {createRequire} from "module"
+import { token } from "morgan";
 
 const require = createRequire(import.meta.url)
 const config = require('../../config.json')
@@ -51,5 +52,16 @@ export function checkToken(userIdStr,tokenStr){
             }
             return false;
         });
+}
+export function removeToken(userIdStr,tokenStr){
+    return LoginToken.find({userId:ObjectId(userIdStr),token:tokenStr,active:true})
+        .then(tokens =>{
+            for(token of tokens){
+                token.isActive = false;
+                token.save();
+            }
+            return true
+        })
+
 }
 

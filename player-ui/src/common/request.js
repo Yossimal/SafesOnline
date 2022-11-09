@@ -19,8 +19,8 @@ export function requestPost(url,body,moreHeaders=null){
         
 }
 
-export function requestWithAuth(url,body,authToken){
-    const requestOptions = generateOptions({...body,token:authToken})
+export function requestWithAuth(url,body,authData){
+    const requestOptions = generateOptions({...body,token:authData.token,userId:authDate.userId})
     return fetch(url,requestOptions)
         .then(response => response.json())
 }
