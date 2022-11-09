@@ -1,9 +1,15 @@
 import runServer from "./server.js";
+import { establishConnection } from "./mongo/mongoConnection.js";
 import {initialize} from "./firebase/auth.js";
-import {uploadFile} from "./firebase/storage.js";
+import Competition from "./mongo/schemes/Competition.js";
+import User from "./mongo/schemes/User.js"
+import setDb from "./mongo/setdb/setdb.js";
 
-const firebaseApp = initialize()
-runServer()
-uploadFile(firebaseApp,'safesCompiled/Gabi','./codes/compiled_safes/Gabi').then(res=>{
-    console.log(res);
-});
+
+
+establishConnection()
+    .then(db=>{
+        setDb();
+        
+        runServer();
+    }).catch(err=>console.error(err))

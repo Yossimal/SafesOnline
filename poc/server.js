@@ -3,12 +3,19 @@ import {exec} from "child_process";
 import {resolve} from "path";
 import express from "express";
 import {createRequire} from "module"
+import bodyParser from "body-parser";
+import cors from 'cors'
+import { checkToken, confirmEmail, login, register } from "./server-functions/authentications.js";
 
 const require = createRequire(import.meta.url)
 const config = require('./config.json')
 const app = express();
 const port = config.server.port
 app.use(express.json())
+//app.use(bodyParser.urlencoded({extended:true}))
+app.use(cors({
+    origin: config.ui.url
+  }));
 
 const SAFES_CODE_PATH = config.paths.SAFES_CODE_PATH;
 const SAFES_COMPILED_PATH =config.paths.SAFES_COMPILED_PATH;
@@ -22,6 +29,14 @@ let lockSafesUploads = false
 let lockKeysUpload = false
 
 function runServer() {
+    const paths = config.server.post.paths
+
+    app.post(paths.login.path,login);
+    app.post(paths.register.path,register);
+    app.post(paths.confirm.path,confirmEmail);
+    app.post(paths.checkToken.path,checkToken)
+
+
     app.get('/', (req, res) => {
         res.send('מה חשבת למצוא כאן?')
     });
@@ -174,7 +189,6 @@ function runServer() {
             res.send({error: `you dont have the privileges for unlocking the ${what} upload options`});
         }
     });
-
     app.get(config.server.get.paths.lockStatus, (req, res) => {
         let what = getWhat(req.params.what)
         if(!what) {
@@ -201,15 +215,12 @@ function runServer() {
             }
         })
     });
-
     app.listen(port, () => {
         console.log(`Listening on port ${port}`)
     });
-
     function checkPassword(name, password) {
         return true;
     }
-
     function isAdmin(name) {
         return true;
     }

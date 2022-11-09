@@ -2,29 +2,84 @@
   "paths": {
     "SAFES_CODE_PATH": "./codes/safes/",
     "SAFES_COMPILED_PATH": "./codes/compiled_safes/",
-    "NASM_PATH": ",\"C:\\Program Files\\NASM\\nasm.exe\"",
+    "NASM_PATH": "nasm",
     "KEYS_CODE_PATH": "./codes/keys/",
     "KEYS_COMPILED_PATH": "codes/compiled_keys/",
     "CORE_WARS_PATH": "./runner/corewars.jar",
-    "JAVA_PATH": "./runner/jdk/bin/java.exe",
+    "JAVA_PATH": "java",
     "GOOGLE_APPLICATION_CREDENTIALS":"./safes-archi-firebase-adminsdk-jmjgr-3a5a1992df.json"
+  },
+  "email":{
+    "address":"safe.crack.comp",
+    "password":"sKY6Bjy5hKhJpmR",
+    "appPassword":"jdbetcqpidwszalz",
+    "from":"Safe Crack Competiotion",
+    "transporter":{
+      "service":"gmail",
+      "auth":{
+      "user":"safe.crack.comp@gmail.com",
+      "pass":"jdbetcqpidwszalz"
+      }
+    },"templates":{
+      "firstRegister":{
+        "bodyPath":"emailsTemplates/register.html",
+        "subject":"Welcome to Safe Crack"
+      }
+    }
+  },
+  "ui":{
+    "url":"http://localhost:3000",
+    "paths":{
+      "confirmEmail":"confirm"
+    }
   },
   "server": {
     "port": 8080,
+    "url":"https://localhost:8080",
     "post": {
       "paths": {
         "lock": "/lock",
         "unlock": "/unlock",
         "uploadSafe": "/uploads/safes",
         "uploadKey": "/uploads/keys",
-        "play": "/play"
+        "play": "/play",
+        "login":{
+          "path":"/login",
+          "params":{
+            "userName":"userName",
+            "password":"password"
+          }
+        },
+        "register":{
+          "path":"/register",
+          "params":{
+            "userName":"userName",
+            "password":"password",
+            "email":"email",
+            "presentName":"fullName"
+          }
+        },
+        "confirm":{
+          "path":"/confirm",
+          "params":{
+            "token":"link"
+          }
+        },
+        "checkToken":{
+          "path":"/check-token",
+          "params":{
+            "token":"token",
+            "userId":"userId"
+          }
+        }
       }
     },
     "get": {
       "paths": {
         "lockStatus": "/status/lock/:what",
         "allSafes": "/safes/all",
-        "getSafeBinary": "/safes/file/:safe"
+        "getSafeBinary": "/safes/file/:safe",
+        "emailUrl":"/confirm/:token"
       }
     }
   },
@@ -35,5 +90,8 @@
         "assembly":{"name": "assembly","extension": ".asm"}
       }
     }
+  },
+  "tokens":{
+    "loginTokenExpirationTime":30
   }
 }
