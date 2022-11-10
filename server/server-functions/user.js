@@ -7,8 +7,9 @@ const config = require('../config.json')
 
 
 export function getUserProfile(req,res){
+    console.log(req.body)
     const userId = req.body[config.server.post.authParams.userId]
-    const user = User.find({_id:new ObjectId(userId)})
+    const user = User.find({_id:userId})
         .then(users=>users[0])
         .then(user=>{
             const resSchema = config.server.post.paths.getUserProfile.responseSchema;

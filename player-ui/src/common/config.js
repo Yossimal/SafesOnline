@@ -8,5 +8,7 @@ export const serverPaths = {
     login:'/login',
     register:'/register',
     confirm:"/confirm",
-    checkToken:"/check-token"
+    checkToken:"/check-token",
+    getUserProfile:"/get-user-profile",
+    changePassword:"/update-password"
 }

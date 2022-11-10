@@ -8,6 +8,7 @@ import Register from './components/Pages/register/Register';
 import EmailConfirm from './components/Pages/emailConfirm/EmailConfirm';
 import PrivateSection from './components/controls/PrivateSection/PrivateSection';
 import TopNavbar from './components/controls/topNavbar/TopNavbar';
+import Profile from './components/Pages/profile/Profile';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="home" element={<PrivateSection><Home/></PrivateSection>}/>
           <Route path="register" element={<Register/>}/>
           <Route path="confirm/:token" element={<EmailConfirm />}/>
+          <Route path="profile" element={<PrivateSection><Profile/></PrivateSection>}/>
         </Routes>
         </BrowserRouter>
       )

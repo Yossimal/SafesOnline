@@ -1,5 +1,9 @@
 import { partial } from "functools";
 import { checkToken } from "../mongo/schemes/LoginToken.js";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const config = require('../config.json');
 
 export function $private(func){
     return partial(privateFunc,func)
@@ -12,7 +16,7 @@ function privateFunc(func,req,res){
     checkToken(userId,token)
     .then(ok=>{
         if(!ok){
-            res.send({error:"You need to login again!",badToken:true})
+            res.send({isError:true,error:"You need to login again!",badToken:true})
             return;
         }else{
             func(req,res)

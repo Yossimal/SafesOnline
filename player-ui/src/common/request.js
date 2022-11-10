@@ -20,7 +20,8 @@ export function requestPost(url,body,moreHeaders=null){
 }
 
 export function requestWithAuth(url,body,authData){
-    const requestOptions = generateOptions({...body,token:authData.token,userId:authDate.userId})
+    const requestOptions = generateOptions({...body,...authData})
+    console.log(requestOptions)
     return fetch(url,requestOptions)
-        .then(response => response.json())
+        .then(response =>  response.json())
 }

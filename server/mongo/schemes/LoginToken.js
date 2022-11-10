@@ -32,8 +32,9 @@ export function generateToken(user){
 }
 
 export function checkToken(userIdStr,tokenStr){
-    const userId = new ObjectId(userIdStr)
-    return LoginToken.find({userId:userId,token:tokenStr,active:true})
+    //const userId = new ObjectId(userIdStr)
+    console.log({userId:userIdStr,token:tokenStr,active:true})
+    return LoginToken.find({userId:userIdStr,token:tokenStr,active:true})
         .then(t=>{
             console.log(t)
             if(t.length===0){

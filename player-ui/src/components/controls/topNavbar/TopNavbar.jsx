@@ -5,6 +5,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useContext } from 'react';
 import { AuthContext } from '../../../context/auth-context/auth-context';
 
+
 function TopNavbar() {
     const authContext = useContext(AuthContext)
     function logOut(){
@@ -20,7 +21,7 @@ function TopNavbar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#">profile</Nav.Link>
+            <Nav.Link href="profile">profile</Nav.Link>
             <Nav.Link href="#home">My Games</Nav.Link>
             <Nav.Link href="#link">Add Game</Nav.Link>
             <Nav.Link href="#createGame">Create Game</Nav.Link>

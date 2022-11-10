@@ -87,7 +87,9 @@ export async function checkToken(req,res){
     const params = config.server.post.paths.checkToken.params;
     const userId = req.body[params.userId];
     const token = req.body[params.token];
-    return res.send(await {isRegistered:checkLoginToken(token,userId)})
+    console.log("token",token)
+    console.log("user id",userId);
+    return res.send({isRegistered:(await checkLoginToken(userId,token))})
 }
 
 export async function logOut(req,res){

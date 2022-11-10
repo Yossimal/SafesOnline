@@ -2,7 +2,7 @@ import { useEffect,useContext, useState } from "react";
 import { Route } from "react-router";
 import { AuthContext } from "../../../context/auth-context/auth-context";
 import { useNavigate } from "react-router";
-import { requestPost } from "../../../common/request";
+import { requestPost, requestWithAuth } from "../../../common/request";
 import {serverPaths, serverUrl} from "../../../common/config.js"
 
 export default function PrivateSection(props){
@@ -18,9 +18,11 @@ export default function PrivateSection(props){
                 token:authContext.token,
                 userId:authContext.userId
             }
-            requestPost(`${serverUrl}${serverPaths.checkToken}`,requestBody)
+            requestWithAuth(`${serverUrl}${serverPaths.checkToken}`,{},requestBody)
                 .then(res=>{
+                    console.log(res)
                     if(!res.isRegistered){
+                        authContext.setIsLoggedIn(false)
                         navigate('/?msg=You ware not active for long time.\n Try to login again.')
                     }else{
                         setIsSafe(true)
