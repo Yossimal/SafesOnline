@@ -9,25 +9,27 @@ const config = require('../../config.json')
 
 
 
-const LoginTokenSchema = new Schema({
+const RestorePasswordTokenSchema = new Schema({
     userId:{type:ObjectId, required:true},
-    lastChange:{type:Date,required:true},
     token:{type:String,required:true},
-    active:{type:Boolean,default:true}
+    active:{type:Boolean,default:true},
+    timeStamp:{type:Date}
 });
 
-const LoginToken = model("LoginToken",LoginTokenSchema);
+const RestorePasswordToken = model("RestorePasswordToken",LoginTokenSchema);
 
 function generateTokenStr(){
     return `${sha256((+ Date()).toString(16))}`
 }
 
-export function generateToken(user){
-    const token = new LoginToken({
-        userId:user._id,
-        lastChange:new Date(),
-        token:generateTokenStr()
-    })
+export function generateToken(userId){
+    const token = new RestorePasswordToken 
+    ({
+        userId:userId,
+        token:generateTokenStr(),
+        active:true,
+        timeStamp:new date()
+    });
     return token.save()
 }
 
@@ -41,13 +43,13 @@ export function checkToken(userIdStr,tokenStr){
                 return false;
             }
             for(let i=0;i<t.length;i++){
-                const addedDate = moment(t[i].lastChange).add(config.tokens.loginTokenExpirationTime,'m').toDate()
+                const addedDate = moment(t[i].timeStamp).add(config.tokens.restorePasswordTokenExpirationTime,'m').toDate()
                 if((new Date()).getTime()>addedDate.getTime()){
                     t[i].active = false;
                     t[i].save();
                     continue;
                 }
-                t[i].lastChange = new Date();
+                t[i].timeStamp = new Date();
                 t[i].save();
                 return true;    
             }
@@ -55,8 +57,6 @@ export function checkToken(userIdStr,tokenStr){
         });
 }
 export async function removeToken(userIdStr,tokenStr){
-    console.log('userId',userIdStr)
-    console.log('tiken',tokenStr)
     const tokens = await LoginToken.find({userId:userIdStr,token:tokenStr,active:true})
     for(let token of tokens){
         token.active = false

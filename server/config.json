@@ -23,14 +23,19 @@
     },"templates":{
       "firstRegister":{
         "bodyPath":"emailsTemplates/register.html",
-        "subject":"Welcome to Safe Crack"
+        "subject":"Welcome to Safe Crack."
+      },
+      "restorePassword":{
+        "bodyPath":"emailsTemplates/restorePassword.html",
+        "subject":"Restore your password to the Safe crack Competiotion."
       }
     }
   },
   "ui":{
     "url":"http://localhost:3000",
     "paths":{
-      "confirmEmail":"confirm"
+      "confirmEmail":"confirm",
+      "restorePassword":"restore-password"
     }
   },
   "server": {
@@ -103,6 +108,19 @@
             "token":"token",
             "userId":"userId"
           }
+        },
+        "askRestorePassword":{
+          "path":"/ask-restore-password",
+          "params":{
+            "userName":"userName",
+            "email":"email"
+          }
+        },
+        "restorePassword":{
+          "path":"/restore-password",
+          "params":{
+            "token":"token"
+          }
         }
       }
     },
@@ -124,6 +142,7 @@
     }
   },
   "tokens":{
-    "loginTokenExpirationTime":30
+    "loginTokenExpirationTime":30,
+    "restorePasswordTokenExpirationTime":10
   }
 }

@@ -31,6 +31,13 @@ export class AuthContextData{
             token[1](val)
         }
     }
+
+    authData = ()=>{
+        return {
+            userId:this.userId,
+            token:this.token
+        }
+    }
     
 
 }

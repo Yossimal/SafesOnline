@@ -9,6 +9,8 @@ export function $private(func){
     return partial(privateFunc,func)
 }
 
+
+
 function privateFunc(func,req,res){
     const params = config.server.post.paths.getUserProfile.params;
     const token = req.body[params.token];

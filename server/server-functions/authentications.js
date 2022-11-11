@@ -94,9 +94,10 @@ export async function checkToken(req,res){
 
 export async function logOut(req,res){
     const params = config.server.post.paths.logOut.params;
-    const userId = params.userId;
-    const token = params.token;
+    const userId = req.body[params.userId];
+    const token = req.body[params.token];
     removeToken(userId,token)
         .then(ok=>ok?{loggedOut:true}:{loggedOut:false})
+        .then(r=>res.send({ok:r}))
     
 }

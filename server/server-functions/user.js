@@ -1,8 +1,12 @@
 import User from "../mongo/schemes/User.js";
 import {createRequire} from "module"
 import {ObjectId} from 'mongoose'
+import nodemailer from 'nodemailer'
+import {generateToken} from '../mongo/schemes/RestorePasswordToken'
+
 const require = createRequire(import.meta.url)
 const config = require('../config.json')
+
 
 
 
@@ -27,7 +31,9 @@ export function changePassword(req,res){
     const oldPassword = req.body[params.oldPassword]
     const newPassword = req.body[params.newPassword]
     const userId = req.body[config.server.post.authParams.userId]
-    User.find({_id:new ObjectId(userId)})
+    console.log("userId",userId)
+    console.log(req.body)
+    User.find({_id:userId})
         .then(users=>users[0])
         .then(user=>{
             if(user.password!==oldPassword){
@@ -40,4 +46,47 @@ export function changePassword(req,res){
             }
         });
     
+}
+
+export function askRestorePaassword(req,res){
+    const params =  config.server.post.paths.askRestorePassword.params;
+    const email = req.body[params.email]
+    const userName = req.body[params.userName]
+    User.find({email:email,userName:userName})
+    .then(users=>users.length==0?null:users[0])
+    .then(user=>{
+        if(user==null){
+            res.send({isError:true,error:"Bad user name or email"})
+        }else{
+            sendRestorePasswordEmail(user._id.toString(),user.email)
+            res.send({isError:false})
+        }
+    });
+}
+
+export function restorePassword(req,res){
+    
+}
+
+
+function sendRestorePasswordEmail(userId,userEmail){
+    const template = config.email.templates.restorePassword;
+        fs.readFile(`${template.bodyPath}`,'utf8',(err,data)=>{
+            if(err){
+                console.error(err)
+                return;
+            }
+            const transporter = nodemailer.createTransport(config.email.transporter);            
+            generateToken(userId).then(link=>{
+                const restoreLink = `${config.ui.url}/${config.ui.paths.restorePassword}/${link}`
+                const html = data.replace('%restoreLink%',restoreLink)
+                const message = {
+                    from:config.email.from,
+                    to:userEmail,
+                    subject:template.subject,
+                    html:html
+                }
+                transporter.sendMail(message,result=>{console.log(result);});
+        });
+    })
 }

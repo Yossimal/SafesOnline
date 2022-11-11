@@ -21,6 +21,7 @@ function Login(){
 
     useEffect(()=>{
         if(authContext.isLoggedIn){
+            console.log(authContext.isLoggedIn)
             navigate(pagesPaths.home)
         }
     },[authContext.isLoggedIn])

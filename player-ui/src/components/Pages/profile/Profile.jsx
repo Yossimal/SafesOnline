@@ -2,10 +2,11 @@ import { useEffect,useState } from "react";
 import { useContext } from "react";
 import { requestWithAuth } from "../../../common/request";
 import { serverUrl,serverPaths } from "../../../common/config";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Collapse, Container, Row } from "react-bootstrap";
 import { AuthContext } from "../../../context/auth-context/auth-context";
 import { useNavigate } from "react-router";
-
+import CangePassword from '../../controls/changePassword/ChangePassword'
+import ChangePassword from "../../controls/changePassword/ChangePassword";
 
 export default function Profile(){
     
@@ -16,6 +17,12 @@ export default function Profile(){
     const [email,setEmail] = useState('')
     const [changePassword,setChangePassword] = useState(false)
     
+    const changePasswordElement = (<Row>
+        <Col>
+            <ChangePassword/>
+        </Col>
+    </Row>)
+
     useEffect(()=>{
         
         const authData = {userId:authContext.userId,token:authContext.token}
@@ -35,31 +42,24 @@ export default function Profile(){
 
     return (
         <>
-            <Container>
+            <Container className="m-auto" style={{textAlign:"center"}}>
                 <Row>
-                    <Col/>
-                    <Col>
+                    <Col className="m-auto">
                         {userName}
                     </Col>
-                    <Col/>
                 </Row>
                 <Row>
-                    <Col/>
-                    <Col>
+                    <Col className="m-auto">
                         {fullName}
                     </Col>
-                    <Col/>
                 </Row>
                 <Row>
-                    <Col/>
-                    <Col>
+                    <Col className="m-auto">
                         {email}
                     </Col>
-                    <Col/>
                 </Row>
                 <Row>
-                    <Col/>
-                    <Col>
+                    <Col className="m-auto d-grid gap-2">
                         <Button
                          variant={changePassword?"info":"warning"}
                          size="lg"
@@ -67,8 +67,10 @@ export default function Profile(){
                             {changePassword?"Close change password window.":"Change password"}
                         </Button>
                     </Col>
-                    <Col/>
                 </Row>
+                <Collapse in={changePassword}>
+                    {changePasswordElement}
+                </Collapse>
                 
             </Container>
         </>

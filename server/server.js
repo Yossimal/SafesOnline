@@ -5,7 +5,7 @@ import express from "express";
 import {createRequire} from "module"
 import cors from 'cors'
 import { checkToken, confirmEmail, login, logOut, register } from "./server-functions/authentications.js";
-import { changePassword, getUserProfile } from "./server-functions/user.js";
+import { askRestorePaassword, changePassword, getUserProfile } from "./server-functions/user.js";
 import { $private } from "./server-functions/common.js";
 
 const require = createRequire(import.meta.url)
@@ -39,6 +39,7 @@ function runServer() {
     app.post(paths.logOut.path,logOut);
     app.post(paths.getUserProfile.path,$private(getUserProfile))
     app.post(paths.changePassword.path,$private(changePassword))
+    app.post(paths.askRestorePassword.path,askRestorePaassword)
 
 
 
