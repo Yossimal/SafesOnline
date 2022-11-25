@@ -7,6 +7,7 @@ import { AuthContext } from "../../../context/auth-context/auth-context";
 import { useNavigate } from "react-router";
 import CangePassword from '../../controls/changePassword/ChangePassword'
 import ChangePassword from "../../controls/changePassword/ChangePassword";
+import { $toggleSetter } from "../../../common/wrappers";
 
 export default function Profile(){
     
@@ -63,7 +64,7 @@ export default function Profile(){
                         <Button
                          variant={changePassword?"info":"warning"}
                          size="lg"
-                         onClick={()=>setChangePassword(cp=>!cp)}>
+                         onClick={$toggleSetter(setChangePassword)}>
                             {changePassword?"Close change password window.":"Change password"}
                         </Button>
                     </Col>

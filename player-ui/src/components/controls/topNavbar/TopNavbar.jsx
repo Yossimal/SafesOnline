@@ -40,7 +40,7 @@ function TopNavbar() {
             <Nav.Link href="profile">profile</Nav.Link>
             <Nav.Link href="#HOME">My Games</Nav.Link>
             <Nav.Link href="#link">Add Game</Nav.Link>
-            <Nav.Link href="#createGame">Create Game</Nav.Link>
+            <Nav.Link href="create-competiotion">Create Game</Nav.Link>
             </Nav>
             <Nav>
                 <Nav.Link onClick={logOut}>Log out</Nav.Link>

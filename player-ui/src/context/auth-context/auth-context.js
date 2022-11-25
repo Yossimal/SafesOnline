@@ -45,7 +45,7 @@ export class AuthContextData{
 export const AuthContext = createContext(null);
 
 const AuthContextProvider = ({children})=>{
-    const isLoggedIn = useState(localStorage.getItem("isLoggedIn"));
+    const isLoggedIn = useState(localStorage.getItem("isLoggedIn")==="true");
     const userId = useState(localStorage.getItem("userId"));
     const token =  useState(localStorage.getItem("authToken"));
     return <AuthContext.Provider value={new AuthContextData(userId,token,isLoggedIn)}>{children}</AuthContext.Provider>

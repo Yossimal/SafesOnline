@@ -5,8 +5,9 @@ import express from "express";
 import {createRequire} from "module"
 import cors from 'cors'
 import { checkToken, confirmEmail, login, logOut, register } from "./server-functions/authentications.js";
-import { askRestorePaassword, changePassword, getUserProfile } from "./server-functions/user.js";
+import { askRestorePaassword, changePassword, getUserProfile,restorePassword } from "./server-functions/user.js";
 import { $private } from "./server-functions/common.js";
+import { newCompetiotion } from "./server-functions/competitions.js";
 
 const require = createRequire(import.meta.url)
 const config = require('./config.json')
@@ -40,13 +41,13 @@ function runServer() {
     app.post(paths.getUserProfile.path,$private(getUserProfile))
     app.post(paths.changePassword.path,$private(changePassword))
     app.post(paths.askRestorePassword.path,askRestorePaassword)
-
-
-
-
+    app.post(paths.restorePassword.path,restorePassword)
+    app.post(paths.newCompetiotion.path,$private(newCompetiotion))
     app.get('/', (req, res) => {
         res.send('מה חשבת למצוא כאן?')
     });
+
+    
     app.post(config.server.post.paths.uploadSafe, (req, res) => {
         if (lockSafesUploads) {
             res.send("cant upload safes now")

@@ -12,5 +12,8 @@ export const serverPaths = {
     checkToken:"/check-token",
     getUserProfile:"/get-user-profile",
     changePassword:"/update-password",
-    logout:"/log-out"
+    logout:"/log-out",
+    askRestorePassword:"/ask-restore-password",
+    restorePassword:"/restore-password",
+    createCompetition:'/create-competition'
 }

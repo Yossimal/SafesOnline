@@ -9,6 +9,8 @@ import EmailConfirm from './components/Pages/emailConfirm/EmailConfirm';
 import PrivateSection from './components/controls/PrivateSection/PrivateSection';
 import TopNavbar from './components/controls/topNavbar/TopNavbar';
 import Profile from './components/Pages/profile/Profile';
+import NewPassword from './components/Pages/newPassword/NewPassword';
+import CreateGame from './components/Pages/createGame/CreateGame';
 
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
           <Route path="register" element={<Register/>}/>
           <Route path="confirm/:token" element={<EmailConfirm />}/>
           <Route path="profile" element={<PrivateSection><Profile/></PrivateSection>}/>
+          <Route path="restore-password/:token" element={<NewPassword/>}/>
+          <Route path="create-competiotion" element={<PrivateSection><CreateGame/></PrivateSection>}/>
         </Routes>
         </BrowserRouter>
       )
