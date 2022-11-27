@@ -4,9 +4,8 @@ import { Schema,model,ObjectId } from "mongoose";
 const KeySchema = new Schema({
     competitionId:{type:ObjectId,required:true},
     ownerId:{type:ObjectId,required:true},
-    keyBytecodePath:{type:String,default:""},
-    keyCodePath:String,
-    keyAccepted:{type:Boolean,default:false}
+    keyAccepted:{type:Boolean,default:false},
+    safeId:{type:ObjectId,required:true}
 },{timestamps:true});
 
 const Key = model("Key",KeySchema);

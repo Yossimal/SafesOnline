@@ -13,4 +13,5 @@ const competitionSchema = new Schema({
 const Competition = model("Competition",competitionSchema);
 
 
+
 export default Competition;

@@ -4,7 +4,7 @@ import {ObjectId} from 'mongoose'
 import nodemailer from 'nodemailer'
 import {generateToken, removeToken} from '../mongo/schemes/RestorePasswordToken.js'
 import { checkToken as checkRestoreToken } from "../mongo/schemes/RestorePasswordToken.js";
-import fs, { fdatasyncSync } from 'fs'
+import fs from 'fs'
 import {sha256} from 'js-sha256'
 import RandExp from 'randexp'
 

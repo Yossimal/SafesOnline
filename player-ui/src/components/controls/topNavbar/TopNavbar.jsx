@@ -1,10 +1,8 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useContext } from 'react';
 import { AuthContext } from '../../../context/auth-context/auth-context';
-import { redirect, useNavigate } from 'react-router';
 import {clientUrl, serverPaths, serverUrl} from '../../../common/config.js'
 import { requestPost } from '../../../common/request';
 
@@ -38,7 +36,7 @@ function TopNavbar() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href="profile">profile</Nav.Link>
-            <Nav.Link href="#HOME">My Games</Nav.Link>
+            <Nav.Link href="competiotions">My Games</Nav.Link>
             <Nav.Link href="#link">Add Game</Nav.Link>
             <Nav.Link href="create-competiotion">Create Game</Nav.Link>
             </Nav>

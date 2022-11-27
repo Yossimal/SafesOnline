@@ -7,7 +7,8 @@ import cors from 'cors'
 import { checkToken, confirmEmail, login, logOut, register } from "./server-functions/authentications.js";
 import { askRestorePaassword, changePassword, getUserProfile,restorePassword } from "./server-functions/user.js";
 import { $private } from "./server-functions/common.js";
-import { newCompetiotion } from "./server-functions/competitions.js";
+import { allCompetiotions, loadCompetiotionsData, newCompetiotion } from "./server-functions/competitions.js";
+import { assembleSafe, saveSafe } from "./server-functions/filesEditor.js";
 
 const require = createRequire(import.meta.url)
 const config = require('./config.json')
@@ -38,11 +39,15 @@ function runServer() {
     app.post(paths.confirm.path,confirmEmail);
     app.post(paths.checkToken.path,checkToken);
     app.post(paths.logOut.path,logOut);
-    app.post(paths.getUserProfile.path,$private(getUserProfile))
-    app.post(paths.changePassword.path,$private(changePassword))
-    app.post(paths.askRestorePassword.path,askRestorePaassword)
-    app.post(paths.restorePassword.path,restorePassword)
-    app.post(paths.newCompetiotion.path,$private(newCompetiotion))
+    app.post(paths.getUserProfile.path,$private(getUserProfile));
+    app.post(paths.changePassword.path,$private(changePassword));
+    app.post(paths.askRestorePassword.path,askRestorePaassword);
+    app.post(paths.restorePassword.path,restorePassword);
+    app.post(paths.newCompetiotion.path,$private(newCompetiotion));
+    app.post(paths.allCompetiotions.path,$private(allCompetiotions));
+    app.post(paths.specificCompetitoion.path,$private(loadCompetiotionsData));
+    app.post(paths.saveSafe.path,$private(saveSafe));
+    app.post(paths.assembleSafe.path,$private(assembleSafe));
     app.get('/', (req, res) => {
         res.send('מה חשבת למצוא כאן?')
     });

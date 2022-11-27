@@ -36,7 +36,7 @@ export function generateToken(userId){
 export function checkToken(tokenStr){
     return RestorePasswordToken.find({token:tokenStr,active:true})
         .then(t=>{
-            console.log(t)
+            // console.log(t)
             if(t.length===0){
                 return null;
             }

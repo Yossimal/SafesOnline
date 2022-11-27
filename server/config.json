@@ -1,13 +1,14 @@
 {
   "paths": {
-    "SAFES_CODE_PATH": "./codes/safes/",
-    "SAFES_COMPILED_PATH": "./codes/compiled_safes/",
+    "SAFES_CODE_PATH": "codes/safes/",
+    "SAFES_COMPILED_PATH": "codes/compiled_safes/",
     "NASM_PATH": "nasm",
-    "KEYS_CODE_PATH": "./codes/keys/",
+    "KEYS_CODE_PATH": "codes/keys/",
     "KEYS_COMPILED_PATH": "codes/compiled_keys/",
-    "CORE_WARS_PATH": "./runner/corewars.jar",
+    "CORE_WARS_PATH": "runner/corewars.jar",
     "JAVA_PATH": "java",
-    "GOOGLE_APPLICATION_CREDENTIALS":"./safes-archi-firebase-adminsdk-jmjgr-3a5a1992df.json"
+    "GOOGLE_APPLICATION_CREDENTIALS":"./safes-archi-firebase-adminsdk-jmjgr-3a5a1992df.json",
+    "DUMMY_KEY":"codes/compiled_keys/dummy"
   },
   "email":{
     "address":"safe.crack.comp",
@@ -132,11 +133,52 @@
           }
         },
         "newCompetiotion":{
-          "path":"/new-competiotion",
+          "path":"/create-competition",
           "params":{
             "name":"name",
             "description":"description",
-            "startTime":"startTime "
+            "startTime":"startTime"
+          }
+        },
+        "allCompetiotions":{
+          "path":"/all-competitions",
+          "params":{
+            
+          }
+        },
+        "specificCompetitoion":{
+          "path":"/specific-competition",
+          "params":{
+            "competiotionId":"compId"
+          }
+        },
+        "saveSafe":{
+          "path":"/save-safe",
+          "params":{
+            "safeId":"safeId",
+            "safeCode":"safeCode",
+            "name":"name"
+          }
+        },
+        "assembleSafe":{
+          "path":"/assemble-safe",
+          "params":{
+            "safeId":"safeId",
+            "safeCode":"safeCode",
+            "name":"name"
+          }
+        },
+        "saveKey":{
+          "path":"/save-key",
+          "params":{
+            "safeId":"safeId",
+            "keyCode":"keyCode"
+          }
+        },"assembleKey":{
+          "path":"/assemble-key",
+          "params":{
+            "safeId":"safeId",
+            "keyCode":"keyCode"
           }
         }
       }

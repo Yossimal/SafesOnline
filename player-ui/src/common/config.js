@@ -15,5 +15,9 @@ export const serverPaths = {
     logout:"/log-out",
     askRestorePassword:"/ask-restore-password",
     restorePassword:"/restore-password",
-    createCompetition:'/create-competition'
+    createCompetition:'/create-competition',
+    allCompetiotions:'/all-competitions',
+    specificCompetiotion:'/specific-competition',
+    saveSafe:'/save-safe',
+    assembleSafe:'/assemble-safe'
 }
