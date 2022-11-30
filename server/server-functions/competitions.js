@@ -4,6 +4,7 @@ import fs from 'fs'
 import nodemailer from 'nodemailer'
 import User from "../mongo/schemes/User.js";
 import Safe from "../mongo/schemes/Safe.js";
+import Key from "../mongo/schemes/Key.js";
 
 const require = createRequire(import.meta.url)
 const config = require('../config.json')
@@ -13,7 +14,6 @@ function generateCompetitionToken(){
 }
 
 export function newCompetiotion(req,res){
-    // console.log(req.body);
     const params = config.server.post.paths.newCompetiotion.params;
     const authParams = config.server.post.authParams;
     const description = req.body[params.description]
@@ -59,7 +59,6 @@ export function newCompetiotion(req,res){
         const template = config.email.templates.newCompetiotion;
         fs.readFile(`${template.bodyPath}`,'utf8',(err,data)=>{
             if(err){
-                console.log(err);
                 return;
             }
             const transporter = nodemailer.createTransport(config.email.transporter);
@@ -80,10 +79,8 @@ export async function allCompetiotions(req,res){
     const user = await User.findById(userId);
     const competiotionsIds = user.competitions.map(c=>c.competitionId);
     const result = await Promise.all(competiotionsIds.map(async function(compId){
-        console.log(compId)
         const comp = await Competition.findById(compId)
         
-        console.log(comp)
         return {
             id:comp._id,
             name:comp.name,
@@ -91,12 +88,10 @@ export async function allCompetiotions(req,res){
             startTime:comp.startTime
         }
     }));
-    console.log("responding")
     res.send(result)
 }
 
 export async function loadCompetiotionsData(req,res){
-    console.log(req.body)
     const userId = req.body[config.server.post.authParams.userId];
     const params = config.server.post.paths.specificCompetitoion.params;
     const competiotionId = req.body[params.competiotionId]
@@ -129,9 +124,9 @@ export async function loadCompetiotionsData(req,res){
         name:safeData.name,
         code:""
     }
-    const safeCodePath = `..${codePath}/${safeData.id.toString()}.asm`
-    if(fs.existsSync()){
-        safeData.code = fs.readFileSync(safeCodePath)
+    const safeCodePath = `${codePath}/${safeData.id.toString()}.asm`
+    if(fs.existsSync(safeCodePath)){
+        safeData.code = fs.readFileSync(safeCodePath,{encoding:'utf8'})
     }
     //get other safes base data
     const otherSafes = await Safe.find({
@@ -148,5 +143,91 @@ export async function loadCompetiotionsData(req,res){
         safeData:safeData,
         otherSafes:otherSafesData
     });
+}
+
+export async function joinCompetition(req,res){
+    const userId = req.body[config.server.post.authParams.userId];
+    const params = config.server.post.paths.joinCompetition.params;
+    const gameCode = req.body[params.gameCode];
+
+    const comps = await Competition.find({registerToken:gameCode});
+    if(comps.length==0){
+        res.send({isError:true,error:"Bad token!"});
+        return;
+    }
+    const comp = comps[0]
+    const user = await User.findById(userId)
+    if((await Safe.find({ownerId:userId,competiotinId:comp._id})).length==0){
+        res.send({isError:true,error:"You already in that game."});
+    }
+    const safe = new Safe({
+        competiotinId:comp._id,
+        ownerId:userId
+    });
+    const savedSafe = await safe.save();
+    user.competitions.push({
+        competitionId:comp._id,
+        safeId:savedSafe._id
+    });
+    user.save();
+    res.send({isError:false});
+}
+
+export async function loadKeyCode(req,res){
+    const userId = req.body[config.server.post.authParams.userId]
+    const params = config.server.post.paths.loadKeyCode.params
+    const safeId = req.body[params.safeId]
+
+    const user = await User.findById(userId)
+    const safe = await Safe.findById(safeId)
+    //check for user validation
+    const userSafes = await Safe.find({ownerId:userId,competiotinId:safe.competiotinId});
+    if(userSafes.length==0){
+        res.send({isError:true,error:"Access Error!"});
+        return;
+    }
+    const keys = await Key.find({safeId:safeId,competitionId:safe.competiotinId,ownerId:userId});
+    //if there is no key ->create one
+    let key;
+    if(keys.length==0){
+        key = new Key({
+            safeId:safeId,
+            ownerId:userId
+        });
+        key = await key.save();
+    }else{
+        key=keys[0];
+    }
+    const keyCodePath = `${config.paths.KEYS_CODE_PATH}${key._id}.asm`;
+    
+    if(fs.existsSync(keyCodePath)){
+        const code = fs.readFileSync(keyCodePath,{encoding:"utf8"});
+        res.send({isError:false,code:code})
+        return;
+    }
+    res.send({isError:false,code:""});
+}
+export async function loadSafeCode(req,res){
+    const userId = req.body[config.server.post.authParams.userId]
+    const params = config.server.post.paths.loadSafeCode.params
+    const safeId = req.body[params.safeId]
+    const codePath = `${config.paths.SAFES_CODE_PATH}${safeId}.asm`
+
+    const safe = await Safe.findById(safeId)
+    const userSafe = await Safe.find({competiotinId:safe.competiotinId,ownerId:userId})
+    if(userSafe.length==0){
+        res.send({isError:true,error:"Access Denied"})
+    }
+    else if(!fs.existsSync(codePath)){
+        res.send({isError:false,code:""})
+    }
+    else{
+        fs.readFile(codePath,{encoding:'utf8'},(err,data)=>{
+            if(err){
+                res.send({isError:true,error:"Reading Error."})
+            }
+            res.send({isError:false,code:data})
+        });
+    }
 }
 

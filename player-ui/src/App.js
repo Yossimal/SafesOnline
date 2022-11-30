@@ -13,6 +13,7 @@ import NewPassword from './components/Pages/newPassword/NewPassword';
 import CreateGame from './components/Pages/createGame/CreateGame';
 import MyGames from './components/Pages/myGames/MyGames';
 import SpecificGame from './components/Pages/SpecificGame/SpecificGame';
+import AddGame from './components/Pages/addGame/AddGame';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="create-competiotion" element={<PrivateSection><CreateGame/></PrivateSection>}/>
           <Route path="competiotions" element={<PrivateSection><MyGames/></PrivateSection>}/>
           <Route path="competiotions/:comp_id" element={<PrivateSection><SpecificGame/></PrivateSection>}/>
+          <Route path="join-competition" element={<PrivateSection><AddGame /></PrivateSection>} />
         </Routes>
         </BrowserRouter>
       )

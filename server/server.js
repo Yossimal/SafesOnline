@@ -7,8 +7,9 @@ import cors from 'cors'
 import { checkToken, confirmEmail, login, logOut, register } from "./server-functions/authentications.js";
 import { askRestorePaassword, changePassword, getUserProfile,restorePassword } from "./server-functions/user.js";
 import { $private } from "./server-functions/common.js";
-import { allCompetiotions, loadCompetiotionsData, newCompetiotion } from "./server-functions/competitions.js";
-import { assembleSafe, saveSafe } from "./server-functions/filesEditor.js";
+import { allCompetiotions, joinCompetition, loadCompetiotionsData, loadKeyCode, loadSafeCode, newCompetiotion } from "./server-functions/competitions.js";
+import { assembleKey, assembleSafe, downloadSafe, saveKey, saveSafe } from "./server-functions/filesEditor.js";
+import { crackSafe } from "./server-functions/runGames.js";
 
 const require = createRequire(import.meta.url)
 const config = require('./config.json')
@@ -48,6 +49,13 @@ function runServer() {
     app.post(paths.specificCompetitoion.path,$private(loadCompetiotionsData));
     app.post(paths.saveSafe.path,$private(saveSafe));
     app.post(paths.assembleSafe.path,$private(assembleSafe));
+    app.post(paths.joinCompetition.path,$private(joinCompetition));
+    app.post(paths.getDownloadLink.path,$private(downloadSafe))
+    app.post(paths.loadKeyCode.path,$private(loadKeyCode))
+    app.post(paths.loadSafeCode.path,$private(loadSafeCode))
+    app.post(paths.saveKey.path,$private(saveKey))
+    app.post(paths.assembleKey.path,$private(assembleKey))
+    app.post(paths.crackSafe.path,$private(crackSafe))
     app.get('/', (req, res) => {
         res.send('מה חשבת למצוא כאן?')
     });

@@ -11,14 +11,18 @@ import { asm_syntex } from './asm-highlights';
 
 
 export default function AsmEditor({codeState}) {
-  
+
+
+  function handleCodeChange(code){
+    codeState[1](code);   
+  }
 
   return (
       <div className="window">
         <div className="editor_wrap">
           <Editor
             value={codeState[0]}
-            onValueChange={(code) => codeState[1](code)}
+            onValueChange={handleCodeChange}
             highlight={(code) => highlight(code, asm_syntex)}
             padding={10}
             style={{

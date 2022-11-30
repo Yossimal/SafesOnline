@@ -39,9 +39,9 @@ export default function Register(){
     function checkForm(){
         if(password!==confirmPassword){
             return {ok:false,msg:"confirm password not match the password"};
-        }else if(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)){
+        }else if(!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)){
             return {ok:false,msg:"password must contain 6 characters, at least one letter and one number"};
-        }else if(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(email)){
+        }else if(!/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(email)){
             return {ok:false,msg:"invalid email"}
         }else{
             return {ok:true}

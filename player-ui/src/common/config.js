@@ -19,5 +19,12 @@ export const serverPaths = {
     allCompetiotions:'/all-competitions',
     specificCompetiotion:'/specific-competition',
     saveSafe:'/save-safe',
-    assembleSafe:'/assemble-safe'
+    assembleSafe:'/assemble-safe',
+    joinCompetition:'/join-competition',
+    downloadSafe:'/get-download-link',
+    loadKey:'/load-key-code',
+    crackSafe:'/run-game',
+    saveKey:'/save-key',
+    assembleKey:'/assemble-key',
+    loadsafeCode:'/load-safe-code'
 }

@@ -180,6 +180,36 @@
             "safeId":"safeId",
             "keyCode":"keyCode"
           }
+        },
+        "joinCompetition":{
+          "path":"/join-competition",
+          "params":{
+            "gameCode":"gameCode"
+          }
+        },
+        "getDownloadLink":{
+          "path":"/get-download-link",
+          "params":{
+            "safeId":"safeId"
+          }
+        },
+        "loadKeyCode":{
+          "path":"/load-key-code",
+          "params":{
+            "safeId":"safeId"
+          }
+        },
+        "crackSafe":{
+            "path":"/run-game",
+            "params":{
+              "safeId":"safeId"
+            }
+        },
+        "loadSafeCode":{
+          "path":"/load-safe-code",
+          "params":{
+            "safeId":"safeId"
+          }  
         }
       }
     },

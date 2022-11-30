@@ -37,7 +37,7 @@ function TopNavbar() {
           <Nav className="me-auto">
             <Nav.Link href="profile">profile</Nav.Link>
             <Nav.Link href="competiotions">My Games</Nav.Link>
-            <Nav.Link href="#link">Add Game</Nav.Link>
+            <Nav.Link href="join-competition">Add Game</Nav.Link>
             <Nav.Link href="create-competiotion">Create Game</Nav.Link>
             </Nav>
             <Nav>

@@ -7,7 +7,7 @@ const competitionSchema = new Schema({
     name:{type:String,require:true},
     description:String,
     canUploadSafes:{type:Boolean,default:true},
-    canUploadKeys:{type:Boolean,deafault:true}
+    canUploadKeys:{type:Boolean,default:true}
 },{timestamps:true});
 
 const Competition = model("Competition",competitionSchema);
