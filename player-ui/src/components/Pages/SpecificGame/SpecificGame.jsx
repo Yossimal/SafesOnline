@@ -41,10 +41,6 @@ export default function SpecificGame(){
         setCode(downloadedCode)
     },[downloadedCode])
 
-    function isSaved(){
-        console.log(code)
-        return downloadedCode===code
-    }
 
     function saveSafe(){
         requestWithAuth(`${serverUrl}${serverPaths.saveSafe}`,{safeId:compData.safeData.id,name:safeName,safeCode:code},authContext.authData())
@@ -98,14 +94,23 @@ export default function SpecificGame(){
     }
 
     function onSafeSelected(id){
-        if(!isSaved()&&!window.confirm("Are you sure you want to change window without saving?")){
-            return;
+        if(downloadedCode!==code){
+            if(!window.confirm("Are you sure you want to change window without saving?")){
+                return;
+            }
         }
         else{
             requestWithAuth(`${serverUrl}${serverPaths.loadKey}`,{safeId:id},authContext.authData())
                 .then(res=>{
                     setDownloadedCode(res.code)
                     setCrackedSafeId(id)
+                    if(res.isWin){
+                        setAlertColor("warning")
+                        setAlertMsg("Warning: That key already wining this safe! if you will assemble or save new key you may lose the winning progress!");
+                    }
+                    else{
+                        setAlertMsg('')
+                    }
             });
         }
     }
@@ -141,18 +146,21 @@ export default function SpecificGame(){
         })
     }
     function editSafe(){
-        if(!isSaved()&&!window.confirm("Are you sure you want to leave the key without saving?")){
-            return;
+        if(downloadedCode!==code){
+            if(!window.confirm("Are you sure you want to leave the key without saving?")){
+                return;
+            }
         }
         else{
             setCrackedSafeId(null)
-            requestWithAuth(`${serverUrl}${serverPaths.loadsafeCode}`,{safeId:compData.safeData.id},authContext.authData())
+            requestWithAuth(`${serverUrl}${serverPaths.loadSafeCode}`,{safeId:compData.safeData.id},authContext.authData())
                 .then(res=>{
                     if(res.isError){
                         handleResponse("",res)
                     }
                     else{
                         setDownloadedCode(res.code)
+                        setAlertMsg('')
                     }
                 });
         }
@@ -168,14 +176,20 @@ export default function SpecificGame(){
                                 <Col>
                                     <h1 style={{textAlign:"center"}}>{competiotionName}</h1>
                                     <Input value={safeName} setter={setSafeName} placeholder="The safe name"/>
-                                    <AsmEditor codeState={[code,setCode]} />
                                 </Col>
                             </Row>
-                            <Row>
+                            <Row>   
                                 <Col>
                                     {alertMsg!=''&&<Alert variant={alertColor}>{alertMsg}</Alert>}
                                 </Col>
                             </Row>
+                            <Row>
+                                <Col>
+                                
+                                    <AsmEditor codeState={[code,setCode]} />
+                                </Col>
+                            </Row>
+
                             <Row>
                                 <Col>
                                 <div className="mb-2">

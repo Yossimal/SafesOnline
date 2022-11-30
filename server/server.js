@@ -7,7 +7,7 @@ import cors from 'cors'
 import { checkToken, confirmEmail, login, logOut, register } from "./server-functions/authentications.js";
 import { askRestorePaassword, changePassword, getUserProfile,restorePassword } from "./server-functions/user.js";
 import { $private } from "./server-functions/common.js";
-import { allCompetiotions, joinCompetition, loadCompetiotionsData, loadKeyCode, loadSafeCode, newCompetiotion } from "./server-functions/competitions.js";
+import { allCompetiotions, downloadSafeMan, getManagmentUsersData, getScores, joinCompetition, loadCompetiotionsData, loadKeyCode, loadSafeCode, newCompetiotion } from "./server-functions/competitions.js";
 import { assembleKey, assembleSafe, downloadSafe, saveKey, saveSafe } from "./server-functions/filesEditor.js";
 import { crackSafe } from "./server-functions/runGames.js";
 
@@ -50,12 +50,18 @@ function runServer() {
     app.post(paths.saveSafe.path,$private(saveSafe));
     app.post(paths.assembleSafe.path,$private(assembleSafe));
     app.post(paths.joinCompetition.path,$private(joinCompetition));
-    app.post(paths.getDownloadLink.path,$private(downloadSafe))
-    app.post(paths.loadKeyCode.path,$private(loadKeyCode))
-    app.post(paths.loadSafeCode.path,$private(loadSafeCode))
-    app.post(paths.saveKey.path,$private(saveKey))
-    app.post(paths.assembleKey.path,$private(assembleKey))
-    app.post(paths.crackSafe.path,$private(crackSafe))
+    app.post(paths.getDownloadLink.path,$private(downloadSafe));
+    app.post(paths.loadKeyCode.path,$private(loadKeyCode));
+    app.post(paths.loadSafeCode.path,$private(loadSafeCode));
+    app.post(paths.saveKey.path,$private(saveKey));
+    app.post(paths.assembleKey.path,$private(assembleKey));
+    app.post(paths.crackSafe.path,$private(crackSafe));
+    app.post(paths.managerDownloadSafe.path,$private(downloadSafeMan));
+    app.post(paths.loadManagmentData.path,$private(getManagmentUsersData));
+    app.post(paths.loadScores.path,$private(getScores));
+    
+
+
     app.get('/', (req, res) => {
         res.send('מה חשבת למצוא כאן?')
     });

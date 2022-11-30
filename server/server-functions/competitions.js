@@ -202,7 +202,7 @@ export async function loadKeyCode(req,res){
     
     if(fs.existsSync(keyCodePath)){
         const code = fs.readFileSync(keyCodePath,{encoding:"utf8"});
-        res.send({isError:false,code:code})
+        res.send({isError:false,code:code,isWin:key.keyWin})
         return;
     }
     res.send({isError:false,code:""});
@@ -229,5 +229,45 @@ export async function loadSafeCode(req,res){
             res.send({isError:false,code:data})
         });
     }
+}
+
+export function getScores(req,res){
+
+}
+
+export async function getManagmentUsersData(req,res){
+    const userId = req.body[config.server.post.authParams.userId]
+    const params = config.server.post.paths.loadManagmentData.params
+    const compId = [params.competitionId]
+
+    //check if the user is the manager
+    const comp = await Competition.findById(compId);
+    if(comp==null){
+        res.send({isError:true,error:"Dont even try to do that!"});
+        return;
+    }
+    else if(comp._id.toString()!=userId){
+        res.send({isError:true,error:"You are not the manager! Go Away!"});
+        return;
+    }
+    else{
+        //get all safes in competition
+        const safes = await Safe.find({competiotinId:compId,ownerId:userId})
+        const results = await Promise.all(safes.map(async safe=>{
+            const item = {}
+            item.safe = {id:safe._id,name:safe.name,accepted:safe.safeAccepted}
+            const user = await User.findById(userId);
+            item.user = {name:user.presentName,email:user.email}
+            return item;
+        }));
+        res.send({isError:false,data:results})
+        
+        
+    }
+
+}
+
+export function downloadSafeMan(req,res){
+
 }
 

@@ -102,7 +102,6 @@ export async function assembleSafe(req,res){
                             }else{
                                 res.send({isError:false});
                                 safe.safeAccepted = true;
-                                
                             }
                             safe.save();
                         });
@@ -197,6 +196,7 @@ export async function assembleKey(req,res){
                         res.send({isError:true,error:"That key is illegal"});
                     }else{
                         key.keyAccepted = true
+                        key.save()
                         res.send({isError:false})
                     }
                 });
@@ -208,7 +208,8 @@ export async function assembleKey(req,res){
 
 export async function getKey(userId,safeId){
     console.log(userId,safeId)
-    const keys = Key.find({ownerId:userId,safeId:safeId})
+    const keys = await Key.find({ownerId:userId,safeId:safeId})
+    console.log(keys)
     if(keys.length>0){
         return keys[0];
     }

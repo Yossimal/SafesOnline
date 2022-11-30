@@ -210,6 +210,25 @@
           "params":{
             "safeId":"safeId"
           }  
+        },
+        "loadManagmentData":{
+          "path":"/load-managment-data",
+          "params":{
+            "competitionId":"compId"
+          }
+        },
+        "managerDownloadSafe":{
+          "path":"/manager-download-safe",
+          "params":{
+            "competiotionId":"compId",
+            "safeId":"safeId"
+          }
+        }
+        "loadScores":{
+          "path":"/load-scores",
+          "params":{
+           "competitionId":"compId"
+          }
         }
       }
     },

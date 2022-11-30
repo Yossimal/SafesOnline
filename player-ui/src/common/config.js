@@ -26,5 +26,8 @@ export const serverPaths = {
     crackSafe:'/run-game',
     saveKey:'/save-key',
     assembleKey:'/assemble-key',
-    loadsafeCode:'/load-safe-code'
+    loadSafeCode:'/load-safe-code',
+    loadScores:"/load-scores",
+    loadManagerData:"/load-managment-data",
+    managerDownloadSafe:"/manager-download-safe"
 }
