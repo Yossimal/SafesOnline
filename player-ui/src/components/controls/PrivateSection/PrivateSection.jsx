@@ -9,7 +9,6 @@ export default function PrivateSection(props){
     const [isSafe,setIsSafe] = useState(false)
     const authContext = useContext(AuthContext);
     useEffect(()=>{
-        // console.log(authContext)
         if(!authContext.isLoggedIn){
             navigate('/?msg=You cant enter that place!\n You must login before!',{replace:true})
         }else{
@@ -19,7 +18,6 @@ export default function PrivateSection(props){
             }
             requestWithAuth(`${serverUrl}${serverPaths.checkToken}`,{},requestBody)
                 .then(res=>{
-                    // console.log(res)
                     if(!res.isRegistered){
                         authContext.setIsLoggedIn(false)
                         navigate('/?msg=You ware not active for long time.\n Try to login again.')

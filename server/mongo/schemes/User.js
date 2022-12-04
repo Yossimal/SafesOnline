@@ -69,7 +69,6 @@ export function addUser(userData){
 }
 
 export function addToCompetition(user,competiotion,isLeader=false){
-    // console.log(user._id)
     const sha = sha256(competiotion._id.toString()+user._id.toString())
     const filePath = `${sha}${+ new Date()}`
     const safe = new Safe({
@@ -78,7 +77,6 @@ export function addToCompetition(user,competiotion,isLeader=false){
         safeBytecodePath:filePath,
         safeCodePath:`${filePath}.asm`,
     });
-    // console.log(safe);
     safe.save().then(s=>{
         user.competitions.push({
             competitionId:competiotion._id,

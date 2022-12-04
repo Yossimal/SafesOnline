@@ -140,7 +140,7 @@ function sendRestorePasswordEmail(userId,userEmail){
                     subject:template.subject,
                     html:html
                 }
-                transporter.sendMail(message,result=>{console.log(result);});
+                transporter.sendMail(message,result=>{});
         });
     })
 }

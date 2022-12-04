@@ -1,10 +1,8 @@
-import { useEffect,useContext } from "react"
-import { requestPost } from "../../../common/request"
-import { AuthContext } from "../../../context/auth-context/auth-context"
-import TopNavbar from "../../controls/topNavbar/TopNavbar"
+import { useEffect,useState,useContext } from "react"
 import { useSearchParams } from "react-router-dom"
-import { useState } from "react"
-import { Alert } from "react-bootstrap"
+import { Alert,Card,Container,Col,Row } from "react-bootstrap"
+
+
 
 
 export default function Home(){
@@ -16,7 +14,23 @@ export default function Home(){
     },[searchParams])
 
     return (<>
-        <h1>Hello User</h1>
+    <Container>
+        <Row>
+            <Col xs={2}/>
+            <Col className="mb-2">
+                <Card>
+                    <Card.Header>Welcome!</Card.Header>
+                    <Card.Body>
+                        <Card.Title>Welcome to the safe cracking competition!</Card.Title>
+                        <Card.Text>
+                            <p>The game is based on CodeGuru game and modified for Architecture curse in magshimim. You can always try <a href="https://codeguru.co.il/Xtreme/">CodeGuru Xtreme</a></p>
+                        </Card.Text>
+                    </Card.Body>
+                </Card> 
+            </Col>
+            <Col xs={2}/>
+        </Row>
+    </Container>      
         {msg&&msg!=""&&<Alert key="success" variant="success">{msg}</Alert>}
     </>
     )

@@ -30,7 +30,6 @@ export function login(req,res){
 }
 
 export function register(req,res){
-    console.log("registering")
     const params = config.server.post.paths.register.params
     const userName = req.body[params.userName]
     const password = req.body[params.password]
@@ -56,7 +55,6 @@ export function register(req,res){
 
 export async function confirmEmail(req,res){
     const token = req.body[config.server.post.paths.confirm.params.token]
-    // console.log(req.body)
     res.send(await checkConfirmationLink(token))
 }
 
@@ -71,14 +69,13 @@ function sendConfirmEmail(userId,userEmail){
             getConfirmationLink(userId).then(link=>{
                 const confirmLink = `${config.ui.url}/${config.ui.paths.confirmEmail}/${link}`
                 const html = data.replace('%confirmLinlk%',confirmLink)
-                // console.log(html)
                 const message = {
                     from:config.email.from,
                     to:userEmail,
                     subject:template.subject,
                     html:html
                 }
-                transporter.sendMail(message,result=>{console.log(result);});
+                transporter.sendMail(message,result=>{});
         });
     })
 }

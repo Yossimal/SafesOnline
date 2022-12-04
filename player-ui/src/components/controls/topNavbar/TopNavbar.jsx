@@ -12,10 +12,8 @@ function TopNavbar() {
 
 
     function logOut(){
-      console.log('lo')
       requestPost(`${serverUrl}${serverPaths.logout}`,authContext.authData())
         .then(res=>{
-          console.log("logging out")
           if(!res.ok){
             window.alert("There was an error logging you out. Try to refresh the page.")
           }else{
@@ -35,10 +33,10 @@ function TopNavbar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="profile">profile</Nav.Link>
-            <Nav.Link href="competiotions">My Games</Nav.Link>
-            <Nav.Link href="join-competition">Add Game</Nav.Link>
-            <Nav.Link href="create-competiotion">Create Game</Nav.Link>
+            <Nav.Link href="/profile" >profile</Nav.Link>
+            <Nav.Link href="/competiotions">My Games</Nav.Link>
+            <Nav.Link href="/join-competition">Add Game</Nav.Link>
+            <Nav.Link href="/create-competiotion">Create Game</Nav.Link>
             </Nav>
             <Nav>
                 <Nav.Link onClick={logOut}>Log out</Nav.Link>

@@ -231,14 +231,12 @@ export async function loadSafeCode(req,res){
     }
 }
 
-export function getScores(req,res){
 
-}
 
 export async function getManagmentUsersData(req,res){
     const userId = req.body[config.server.post.authParams.userId]
     const params = config.server.post.paths.loadManagmentData.params
-    const compId = [params.competitionId]
+    const compId = req.body[params.competitionId]
 
     //check if the user is the manager
     const comp = await Competition.findById(compId);
@@ -246,28 +244,228 @@ export async function getManagmentUsersData(req,res){
         res.send({isError:true,error:"Dont even try to do that!"});
         return;
     }
-    else if(comp._id.toString()!=userId){
+    else if(comp.creatorId.toString()!=userId){
         res.send({isError:true,error:"You are not the manager! Go Away!"});
         return;
     }
     else{
         //get all safes in competition
-        const safes = await Safe.find({competiotinId:compId,ownerId:userId})
+        const safes = await Safe.find({competiotinId:compId})
         const results = await Promise.all(safes.map(async safe=>{
             const item = {}
-            item.safe = {id:safe._id,name:safe.name,accepted:safe.safeAccepted}
-            const user = await User.findById(userId);
-            item.user = {name:user.presentName,email:user.email}
+            item.safe = {
+                id:safe._id,
+                name:safe.name,
+                accepted:safe.safeAccepted
+            }
+            const user = await User.findById(safe.ownerId);
+            item.user = {
+                name:user.presentName,
+                email:user.email
+            }
             return item;
         }));
-        res.send({isError:false,data:results})
+        const lockStatus = {
+            saves:!comp.canUploadSafes,
+            keys:!comp.canUploadKeys
+        }
+        res.send({isError:false,data:results,lockStatus:lockStatus})
         
         
     }
 
 }
 
-export function downloadSafeMan(req,res){
 
+
+export async function getKeysManager(req,res){
+    const userId = req.body[config.server.post.authParams.userId]
+    const params = config.server.post.paths.loadKeysManager.params;
+    const safeId = req.body[params.safeId]
+    const compId = req.body[params.competitionId]
+    
+    //get the competition
+    const comp = await Competition.findById(compId)
+    if(comp==null||comp.creatorId.toString()!=userId){
+        res.send({isError:true,error:"I told you, Go Away!"});
+        return;
+    }
+    else{
+        //check if the safe is ok
+        const safe = await Safe.findById(safeId)
+        if(safe.competiotinId.toString()!=compId){
+            res.send({isError:true,error:"Stop it! I won;t let you get in!"})
+            return;
+        }
+        //load the keys of the safe
+        const keys = await Key.find({safeId:safeId});
+        const results = await Promise.all(keys.map(async key=>{
+            //get the key owner
+            const owner = await User.findById(key.ownerId);
+            const result = {}
+            result.key = {
+                id:key._id.toString(),
+                isWin:key.keyWin,
+                isAccepted:key.keyAccepted
+            }
+            result.user= {
+                name:owner.presentName,
+                email:owner.email
+            }
+            return result
+        }));
+        res.send({isError:false,data:results})
+    }
 }
 
+export async function downloadSafeMan(req,res){
+    const userId = req.body[config.server.post.authParams.userId]
+    const params = config.server.post.paths.managerDownloadSafe.params
+    const compId = req.body[params.competitionId]
+    const safeId = req.body[params.safeId]
+    
+    //check the user credentials
+    const comp = await Competition.findById(compId)
+    if(comp==null||comp.creatorId.toString()!==userId){
+        res.send({isError:true,error:"Stop It! I won't give you the code!"})
+        return;
+    }else{
+        //check if the safe is part of the competition
+        const safe = await Safe.findById(safeId);
+        if(safe==null||safe.competiotinId.toString()!=compId){
+            res.send({isError:true,error:"Being an owner of competition not owns you all the safes in the platforms! Go Away!"})
+            return;
+        }
+        else{
+            //load the safe code
+            const safePath = `${config.paths.SAFES_CODE_PATH}${safeId}.asm`
+            //check if there is file for the safe
+            if(!fs.existsSync(safePath)){
+                //if there is no file -> return an empty code
+                res.send({isError:false,code:""});
+                return;
+            }
+            else{
+                //read the code from the file and send it
+                fs.readFile(safePath,{encoding:'utf8'},(err,data)=>{
+                    if(err){
+                        res.send({isError:true,error:"reading error",info:err.toString()})
+                        return;
+                    }
+                    else{
+                        res.send({isError:false,code:data});
+                        return;
+                    }
+                });
+            }
+        }
+    }
+}
+
+export async function downloadKeyMan(req,res){
+    const userId = req.body[config.server.post.authParams.userId]
+    const params = config.server.post.paths.managerDownloadKey.params;
+    const compId = req.body[params.competitionId]
+    const keyId = req.body[params.keyId]
+
+    //check if the user is the competition owner
+    const comp = await Competition.findById(compId)
+    if(comp==null||comp.creatorId.toString()!=userId){
+        res.send({isError:true,error:"Stop It! I won't give you the code!"})
+        return;
+    }
+    else{
+        //get the key
+        const key = await Key.findById(keyId);
+        if(key==null){
+            res.send({isError:true,error:"There is no even key like that! Stop trying to hack the system!"});
+            return;
+        }
+        //check if the key is part of the competition
+        const keySafe = await Safe.findById(key.safeId.toString());
+        if(keySafe==null||keySafe.competiotinId.toString()!=compId){
+            res.send({isError:true,error:"Being an owner of competition not owns you all the keys in the platforms! Go Away!"})
+            return;
+        }
+        else{
+            //get the key code
+            const keyCodePath = `${config.paths.KEYS_CODE_PATH}${keyId}.asm`
+            if(!fs.existsSync(keyCodePath)){
+                res.send({isError:false,code:""});
+                return;
+            }
+            else{
+                fs.readFile(keyCodePath,{encoding:'utf8'},(err,data)=>{
+                    if(err){
+                        res.send({isError:true,error:"reading error",info:err.toString()})
+                        return;
+                    }
+                    else{
+                        res.send({isError:false,code:data});
+                        return;
+                    }
+                });
+            }
+        }
+
+
+    }
+}
+
+export async function lockUploads(req,res){
+    const userId = req.body[config.server.post.authParams.userId];
+    const params = config.server.post.paths.lockCompetitionUploads.params
+    const compId = req.body[params.competitionId]
+    const lock = req.body[params.lock]
+    const what = req.body[params.what.name]
+
+    //check the user access
+    const comp = await Competition.findById(compId)
+    if(comp == null||comp.creatorId.toString()!==userId){
+        res.send({isError:true,error:"This is not fun! Stop!"});
+        return;
+    }
+    else if(typeof(lock)!=="boolean"||!params.what.options.includes(what)){
+        res.send({isError:true,error:"If you trying to use the api at least use it correctly!"});
+        return;
+    }
+    else{
+        let whatParam = ''
+        if(what==='saves'){
+            whatParam = 'canUploadSafes'
+        }
+        else{
+            whatParam = 'canUploadKeys'
+        }
+        comp[whatParam] = !lock
+        comp.save().then(c=>{
+            res.send({isError:false,status:!comp[whatParam]})
+        })
+
+        
+    }
+}
+
+
+export async function loadScores(compId){
+    const safes = await Safe.find({competiotinId:compId});
+    const scores = await Promise.all(safes.map(async safe=>{
+        const badKeys = await Key.find({safeId:safe._id,keyWin:true});
+        const goodKeys = await Key.find({ownerId:safe.ownerId,keyWin:true});
+        const result={};
+        result.safeName = safe.name;
+        result.badKeys = badKeys.length;
+        result.goodKeys = goodKeys.length;
+        result.accepted = safe.safeAccepted
+        result.score =  calculateScore(result)
+        return result;
+    }))
+    return scores;
+}
+
+function calculateScore(data){
+    const scores = config.rules.scores
+    return (data.accepted?scores.goodSafe:0)
+        +   data.goodKeys*scores.goodKey
+        +   data.badKeys*scores.badKey
+}

@@ -31,7 +31,6 @@ export function requestFile(url,body,authData,moreHeaders=null){
 
 export function requestWithAuth(url,body,authData){
     const requestOptions = generateOptions({...body,...authData})
-    // console.log(requestOptions)
     return fetch(url,requestOptions)
         .then(response =>  response.json())
 }

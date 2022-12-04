@@ -12,7 +12,6 @@ export default function EmailConfirm(){
     useEffect(()=>{
         requestPost(`${serverUrl}${serverPaths.confirm}`,{link:routeParams.token})
             .then(res=>{
-                console.log(res)
                 if(res!=null){
                     authContext.setToken(res.token);
                     authContext.setIsLoggedIn(res.IsLoggedIn)

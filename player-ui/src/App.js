@@ -14,6 +14,7 @@ import CreateGame from './components/Pages/createGame/CreateGame';
 import MyGames from './components/Pages/myGames/MyGames';
 import SpecificGame from './components/Pages/SpecificGame/SpecificGame';
 import AddGame from './components/Pages/addGame/AddGame';
+import GameManager from './components/Pages/Manager/GameManager'
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="competiotions" element={<PrivateSection><MyGames/></PrivateSection>}/>
           <Route path="competiotions/:comp_id" element={<PrivateSection><SpecificGame/></PrivateSection>}/>
           <Route path="join-competition" element={<PrivateSection><AddGame /></PrivateSection>} />
+          <Route path="competiotions/:comp_id/sudo-su" element={<PrivateSection><GameManager/></PrivateSection>}/>
         </Routes>
         </BrowserRouter>
       )

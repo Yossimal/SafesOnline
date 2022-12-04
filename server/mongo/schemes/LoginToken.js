@@ -32,11 +32,8 @@ export function generateToken(user){
 }
 
 export function checkToken(userIdStr,tokenStr){
-    //const userId = new ObjectId(userIdStr)
-    // console.log({userId:userIdStr,token:tokenStr,active:true})
     return LoginToken.find({userId:userIdStr,token:tokenStr,active:true})
         .then(t=>{
-            // console.log(t)
             if(t.length===0){
                 return false;
             }
@@ -55,8 +52,6 @@ export function checkToken(userIdStr,tokenStr){
         });
 }
 export async function removeToken(userIdStr,tokenStr){
-    // console.log('userId',userIdStr)
-    // console.log('tiken',tokenStr)
     const tokens = await LoginToken.find({userId:userIdStr,token:tokenStr,active:true})
     for(let token of tokens){
         token.active = false

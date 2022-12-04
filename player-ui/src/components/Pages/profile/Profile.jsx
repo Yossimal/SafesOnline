@@ -29,9 +29,7 @@ export default function Profile(){
         const authData = {userId:authContext.userId,token:authContext.token}
         requestWithAuth(`${serverUrl}${serverPaths.getUserProfile}`,{},authData)
             .then(res=>{
-                console.log(`isError: ${res.isError}, badToken:${res.badToken}`)
                 if(res.isError && res.badToken){
-                    console.log("isError")
                     navigate(`/?msg=${res.error}`,{replace:true})
                 }else{
                     setUserName(res.userName);

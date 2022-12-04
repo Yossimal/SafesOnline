@@ -10,6 +10,13 @@
     "GOOGLE_APPLICATION_CREDENTIALS":"./safes-archi-firebase-adminsdk-jmjgr-3a5a1992df.json",
     "DUMMY_KEY":"codes/compiled_keys/dummy"
   },
+  "rules":{
+    "scores":{
+      "goodSafe":200,
+      "goodKey":100,
+      "badKey":-20
+    }
+  },
   "email":{
     "address":"safe.crack.comp",
     "password":"sKY6Bjy5hKhJpmR",
@@ -57,11 +64,6 @@
         "token":"token"
       },
       "paths": {
-        "lock": "/lock",
-        "unlock": "/unlock",
-        "uploadSafe": "/uploads/safes",
-        "uploadKey": "/uploads/keys",
-        "play": "/play",
         "login":{
           "path":"/login",
           "params":{
@@ -165,7 +167,8 @@
           "params":{
             "safeId":"safeId",
             "safeCode":"safeCode",
-            "name":"name"
+            "name":"name",
+            "keyCode":"keyCode"
           }
         },
         "saveKey":{
@@ -220,24 +223,49 @@
         "managerDownloadSafe":{
           "path":"/manager-download-safe",
           "params":{
-            "competiotionId":"compId",
+            "competitionId":"compId",
             "safeId":"safeId"
           }
-        }
-        "loadScores":{
-          "path":"/load-scores",
+        },
+        "managerDownloadKey":{
+          "path":"/manager-download-key",
           "params":{
-           "competitionId":"compId"
+            "competitionId":"compId",
+            "keyId":"keyId"
+          }
+        },
+        "loadKeysManager":{
+          "path":"/load-keys-manager",
+          "params":{
+            "safeId":"safeId",
+            "competitionId":"compId"
+          }
+        },
+        "lockCompetitionUploads":{
+          "path":"/lock-uploads",
+          "params":{
+            "competitionId":"compId",
+            "lock":"lock",
+            "what":{
+              "name":"what",
+              "options":["saves","keys","get"]
+            }
           }
         }
       }
     },
-    "get": {
-      "paths": {
-        "lockStatus": "/status/lock/:what",
-        "allSafes": "/safes/all",
-        "getSafeBinary": "/safes/file/:safe",
-        "emailUrl":"/confirm/:token"
+    "socket":{
+      "authParams":{
+        "userId":"userId",
+        "token":"token"
+      },
+      "paths":{
+        "scores":{
+          "path":"scores",
+          "query":{
+            "competitionId":"compId"
+          }
+        }
       }
     }
   },

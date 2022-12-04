@@ -26,7 +26,6 @@ export default function SafeList({safes,onDownload,onSelect}){
 
     useEffect(()=>{
         setItems(safes.map(safe=><SafesListItem key={safe.id} onSelect={generateSelector(safe.id)} onDownload={generateDownloader(safe.id,safe.name)} safeName={safe.name} />))
-        console.log(safes)
     },[safes])
 
     return(<>

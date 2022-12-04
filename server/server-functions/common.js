@@ -9,6 +9,9 @@ export function $private(func){
     return partial(privateFunc,func)
 }
 
+export function $privateSocket(func){
+    return partial(privateSocketFunction,func)
+}
 
 
 function privateFunc(func,req,res){
@@ -25,6 +28,23 @@ function privateFunc(func,req,res){
         }
     });
 }
+
+function privateSocketFunction(func,socket){
+    const params = config.server.socket.authParams
+    const token = socket.handshake.query[params.token]
+    const userId = socket.handshake.query[params.userId]
+    checkToken(userId,token)
+        .then(ok=>{
+            if(!ok){
+                socket.send({isError:true,error:"auth error"})
+                socket.disconnect()
+                return;
+            }else{
+                func(socket)
+            }
+    });
+}
+
 
 export function generateUUID(){
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (character) => {

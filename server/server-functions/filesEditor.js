@@ -7,6 +7,7 @@ import path,{resolve} from 'path'
 import Key from '../mongo/schemes/Key.js';
 import User from '../mongo/schemes/User.js'
 import {runGame} from './runGames.js'
+import { scoreChanged } from './events/scoreChanged.js';
 
 const require = createRequire(import.meta.url)
 const config = require('../config.json')
@@ -104,6 +105,13 @@ export async function assembleSafe(req,res){
                                 safe.safeAccepted = true;
                             }
                             safe.save();
+                            //is the safe ha changed - we need to clear all the keys win status
+                            Key.updateMany({safeId:safeId},{$set:{keyWin:false}})
+                                .then(results=>{
+                                    if(results.modifiedCount>0){
+                                        scoreChanged(comp._id.toString())
+                                    }
+                                });  
                         });
                     });
                 }
@@ -166,6 +174,9 @@ export async function assembleKey(req,res){
         if (!competition.canUploadKeys) {
             res.send({isError:true,error:"Cant upload safes now"})
             return;
+        }else{
+            key.keyWin = false;
+            await key.save()
         }
         exec(`${nasmPath} "./${codePath}.asm"`, (error, stdout, stderr) => {
             if (error || stderr) {
@@ -185,7 +196,6 @@ export async function assembleKey(req,res){
                 //test the key with dummy key so we can know it not a master key
                 const dummyKeyPath = config.paths.DUMMY_KEY
                 runGame(dummyKeyPath,bytecodePath,(error,stdout,stderr)=>{
-                    console.log(stdout)
                     if (error || stderr) {
                         res.send({isError:true,error: "there was an error running the game"})
                         console.error(error)
@@ -195,8 +205,14 @@ export async function assembleKey(req,res){
                     else if(!stdout.includes(`dummy`)){
                         res.send({isError:true,error:"That key is illegal"});
                     }else{
+                        key.keyWin = false;
                         key.keyAccepted = true
-                        key.save()
+                        key.save().then(k=>{
+                            Competition.findById(safe.competiotinId)
+                                .then(comp=>{
+                                    scoreChanged(comp._id.toString())
+                                })
+                        })
                         res.send({isError:false})
                     }
                 });
@@ -207,9 +223,7 @@ export async function assembleKey(req,res){
 }
 
 export async function getKey(userId,safeId){
-    console.log(userId,safeId)
     const keys = await Key.find({ownerId:userId,safeId:safeId})
-    console.log(keys)
     if(keys.length>0){
         return keys[0];
     }

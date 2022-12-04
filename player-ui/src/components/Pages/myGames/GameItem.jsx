@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 export default function GameItem({gameData}){
     //const link = `/competitions/${gameData.id}`
     const navigate = useNavigate();
-    console.log(gameData);
 
     function handleNavigate(){
         navigate(`./${gameData.id}`,{relative:true})

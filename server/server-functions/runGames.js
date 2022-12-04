@@ -2,8 +2,10 @@ import {createRequire} from 'module'
 import {exec} from 'child_process'
 import {resolve} from 'path'
 import Key from '../mongo/schemes/Key.js';
-import Safe from '../mongo/schemes/Safe.js';
 import { existsSync } from 'fs';
+import { scoreChanged } from './events/scoreChanged.js';
+import Competition from '../mongo/schemes/Competition.js';
+import Safe from '../mongo/schemes/Safe.js';
 
 const require = createRequire(import.meta.url);
 const config = require('../config.json')
@@ -35,18 +37,24 @@ export async function crackSafe(req,res){
         res.send({isError:true,error:"There is an error with the safe. Ask the safe owner to reAssemble it."})
     }
     else{
-        runGame(safePath,keyPath,(error,stdout,stderr)=>{
+        runGame(safePath,keyPath,async (error,stdout,stderr)=>{
             if(error||stderr){
                 res.send({isError:true,error:"There was an error running the game. Please try again later."});
             }
-            else if(stdout.indexOf(`${safeId}`)!=-1){
-                res.send({isError:false,isWin:true})
-                key.keyWin = true;
+            else{
+                const safe = await Safe.findById(safeId)
+                const comp = await Competition.findById(safe.competiotinId)
+                if(stdout.indexOf(`${safeId}`)!=-1){
+                    res.send({isError:false,isWin:true})
+                    key.keyWin = true;
+                }else{
+                    res.send({isError:false,isWin:false})
+                    key.keyWin = false;
+                }
                 key.save()
-            }else{
-                res.send({isError:false,isWin:false})
-                key.keyWin = false;
-                key.save()
+                    .then(k=>
+                        scoreChanged(comp._id.toString())
+                )
             }
         })
     }

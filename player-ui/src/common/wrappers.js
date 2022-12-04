@@ -6,3 +6,7 @@ export function $updateInput(setter){
 export function $toggleSetter(setter){
     return ()=>setter(v=>!v)
 }
+
+export function $partial(func,items){
+    return ()=>func(...items)
+}

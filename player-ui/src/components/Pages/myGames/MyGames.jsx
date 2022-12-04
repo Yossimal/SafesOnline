@@ -10,10 +10,8 @@ export default function MyGames(){
     const [games,setGames] = useState([])
     const authContext = useContext(AuthContext)
     useEffect(()=>{
-        console.log(authContext.authData());
         requestWithAuth(`${serverUrl}${serverPaths.allCompetiotions}`,{},authContext.authData())
         .then(res=>{
-            console.log(res)
             setGames(res.map(comp=><GameItem gameData={comp} key={comp.id}/>))
         });
     },[authContext]);

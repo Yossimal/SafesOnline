@@ -29,5 +29,8 @@ export const serverPaths = {
     loadSafeCode:'/load-safe-code',
     loadScores:"/load-scores",
     loadManagerData:"/load-managment-data",
-    managerDownloadSafe:"/manager-download-safe"
+    managerDownloadSafe:"/manager-download-safe",
+    managerLoadKeys:"/load-keys-manager",
+    managerDownloadKey:"/manager-download-key",
+    lockUploads:"/lock-uploads"
 }

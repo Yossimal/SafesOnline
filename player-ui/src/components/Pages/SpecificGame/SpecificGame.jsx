@@ -7,6 +7,7 @@ import { requestWithAuth,requestFile } from "../../../common/request";
 import {serverUrl,serverPaths} from '../../../common/config.js'
 import { AuthContext } from "../../../context/auth-context/auth-context";
 import SafeList from "./SafesList";
+import ScoreBoard from "./ScoreBoard";
 export default function SpecificGame(){
 
     const routeParams = useParams()
@@ -31,24 +32,21 @@ export default function SpecificGame(){
             setCompetiotionName(res.compData.name)
             setDownloadedCode(res.safeData.code)
         })
-    },[routeParams]);
+    },[routeParams,authContext]);
 
-    useEffect(()=>{
-        console.log(code)
-    },[code])
 
     useEffect(()=>{
         setCode(downloadedCode)
     },[downloadedCode])
 
 
-    function saveSafe(){
-        requestWithAuth(`${serverUrl}${serverPaths.saveSafe}`,{safeId:compData.safeData.id,name:safeName,safeCode:code},authContext.authData())
-        .then(res=>{
-            setDownloadedCode(code)
-            handleResponse('The file have been saved!',res)
-        });
-    }
+    // function saveSafe(){
+    //     requestWithAuth(`${serverUrl}${serverPaths.saveSafe}`,{safeId:compData.safeData.id,name:safeName,safeCode:code},authContext.authData())
+    //     .then(res=>{
+    //         setDownloadedCode(code)
+    //         handleResponse('The file have been saved!',res)
+    //     });
+    // }
 
     function assembleSafe(){
         requestWithAuth(`${serverUrl}${serverPaths.assembleSafe}`,{safeId:compData.safeData.id,name:safeName,safeCode:code},authContext.authData())
@@ -94,12 +92,13 @@ export default function SpecificGame(){
     }
 
     function onSafeSelected(id){
+        let ok = true;
         if(downloadedCode!==code){
             if(!window.confirm("Are you sure you want to change window without saving?")){
-                return;
+                ok=false;
             }
         }
-        else{
+        if(ok){
             requestWithAuth(`${serverUrl}${serverPaths.loadKey}`,{safeId:id},authContext.authData())
                 .then(res=>{
                     setDownloadedCode(res.code)
@@ -110,18 +109,19 @@ export default function SpecificGame(){
                     }
                     else{
                         setAlertMsg('')
+                        
                     }
             });
         }
     }
 
-    function saveKey(){
-        requestWithAuth(`${serverUrl}${serverPaths.saveKey}`,{safeId:crackedSafeId,keyCode:code},authContext.authData())
-        .then(res=>{
-            handleResponse("The key has been saved!",res)
-            setDownloadedCode(code)
-        })
-    }
+    // function saveKey(){
+    //     requestWithAuth(`${serverUrl}${serverPaths.saveKey}`,{safeId:crackedSafeId,keyCode:code},authContext.authData())
+    //     .then(res=>{
+    //         handleResponse("The key has been saved!",res)
+    //         setDownloadedCode(code)
+    //     })
+    // }
 
     function assembleKey(){
         requestWithAuth(`${serverUrl}${serverPaths.assembleKey}`,{safeId:crackedSafeId,keyCode:code},authContext.authData())
@@ -193,8 +193,8 @@ export default function SpecificGame(){
                             <Row>
                                 <Col>
                                 <div className="mb-2">
-                                    <Button onClick={crackedSafeId==null?saveSafe:saveKey} size="md" variant="success">Save</Button>{' '}
-                                    <Button onClick={crackedSafeId==null?assembleSafe:assembleKey} size="md">Assemble</Button>{' '}
+                                    {/* <Button onClick={crackedSafeId==null?saveSafe:saveKey} size="md" variant="success">Save</Button>{' '} */}
+                                    <Button onClick={crackedSafeId==null?assembleSafe:assembleKey} size="md">Save and Assemble</Button>{' '}
                                     {crackedSafeId!=null&&<Button variant="secondary" onClick={crackSafe} size="md">Run</Button>}{' '}
                                     {crackedSafeId!=null&&<Button variant="dark" onClick={editSafe} size="md">Continue editing my safe</Button>}
                                 </div>
@@ -204,6 +204,11 @@ export default function SpecificGame(){
                     </Col>
                     <Col>
                         <SafeList onDownload={onSafeDownloaded} onSelect={onSafeSelected} safes={otherSafes}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <ScoreBoard compId={routeParams.comp_id}/>
                     </Col>
                 </Row>
             </Container>
