@@ -130,8 +130,7 @@ export async function loadCompetiotionsData(req,res){
     }
     //get other safes base data
     const otherSafes = await Safe.find({
-        competiotinId:competiotionId,
-        ownerId:{$ne:userId}
+        competiotinId:competiotionId
     });
     const otherSafesData = otherSafes.map(safe=>({
         name:safe.name,
@@ -453,11 +452,13 @@ export async function loadScores(compId){
         const badKeys = await Key.find({safeId:safe._id,keyWin:true});
         const goodKeys = await Key.find({ownerId:safe.ownerId,keyWin:true});
         const result={};
+        const safeKey = goodKeys.find(k=>k.safeId.toString()==safe._id.toString());
         result.safeName = safe.name;
-        result.badKeys = badKeys.length;
-        result.goodKeys = goodKeys.length;
-        result.accepted = safe.safeAccepted
+        result.accepted = safe.safeAccepted&&(safeKey&&safeKey.keyWin);
+        result.badKeys = badKeys.length-(result.accepted?1:0);
+        result.goodKeys = goodKeys.length-(result.accepted?1:0);
         result.score =  calculateScore(result)
+        console.log(result,safeKey,safe)
         return result;
     }))
     return scores;
@@ -465,7 +466,8 @@ export async function loadScores(compId){
 
 function calculateScore(data){
     const scores = config.rules.scores
-    return (data.accepted?scores.goodSafe:0)
+    return !data.accepted?0:
+           (scores.goodSafe
         +   data.goodKeys*scores.goodKey
-        +   data.badKeys*scores.badKey
+        +   data.badKeys*scores.badKey)
 }
