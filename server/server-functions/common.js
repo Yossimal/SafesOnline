@@ -54,3 +54,17 @@ export function generateUUID(){
             return value.toString(16);
         });
 }
+
+
+//gets the object id and returns a unique filename without numbers for that id
+export function getFileName(name){
+    let res = ""
+    for(let i=0;i<name.length;i++){
+        if(name.charCodeAt(i)>='0'.charCodeAt(0)&&name.charCodeAt(i)<='9'.charCodeAt(0)){
+            res+=String.fromCharCode(name.charCodeAt(i)+20);
+        }else{
+            res+=name[i]
+        }
+    }
+    return res
+}

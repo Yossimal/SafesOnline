@@ -1,10 +1,10 @@
 {
   "paths": {
     "SAFES_CODE_PATH": "codes/safes/",
-    "SAFES_COMPILED_PATH": "codes/compiled_safes/",
+    "SAFES_COMPILED_PATH": "codes/compiled_safes/s",
     "NASM_PATH": "nasm",
     "KEYS_CODE_PATH": "codes/keys/",
-    "KEYS_COMPILED_PATH": "codes/compiled_keys/",
+    "KEYS_COMPILED_PATH": "codes/compiled_keys/k",
     "CORE_WARS_PATH": "runner/corewars.jar",
     "JAVA_PATH": "java",
     "GOOGLE_APPLICATION_CREDENTIALS":"./safes-archi-firebase-adminsdk-jmjgr-3a5a1992df.json",

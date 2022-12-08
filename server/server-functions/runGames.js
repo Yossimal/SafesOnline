@@ -6,6 +6,7 @@ import { existsSync } from 'fs';
 import { scoreChanged } from './events/scoreChanged.js';
 import Competition from '../mongo/schemes/Competition.js';
 import Safe from '../mongo/schemes/Safe.js';
+import { getFileName } from './common.js';
 
 const require = createRequire(import.meta.url);
 const config = require('../config.json')
@@ -28,8 +29,8 @@ export async function crackSafe(req,res){
         return;
     }
     const key = keys[0];
-    const keyPath = `${config.paths.KEYS_COMPILED_PATH}${key._id.toString()}`
-    const safePath = `${config.paths.SAFES_COMPILED_PATH}${safeId}`;
+    const keyPath = `${config.paths.KEYS_COMPILED_PATH}${getFileName(key._id.toString())}`
+    const safePath = `${config.paths.SAFES_COMPILED_PATH}${getFileName(safeId)}`;
     if(!existsSync(keyPath)){
         res.send({isEerror:true,error:"There is errorwith your key file. try to assemble it again."})
     }
@@ -38,13 +39,15 @@ export async function crackSafe(req,res){
     }
     else{
         runGame(safePath,keyPath,async (error,stdout,stderr)=>{
+            console.log(stdout);
             if(error||stderr){
                 res.send({isError:true,error:"There was an error running the game. Please try again later."});
             }
             else{
                 const safe = await Safe.findById(safeId)
                 const comp = await Competition.findById(safe.competiotinId)
-                if(stdout.indexOf(`${safeId}`)!=-1){
+                console.log(stdout);
+                if(stdout.indexOf(`${getFileName(safeId)}`)==-1){
                     res.send({isError:false,isWin:true})
                     key.keyWin = true;
                 }else{

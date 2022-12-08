@@ -8,6 +8,7 @@ import Key from '../mongo/schemes/Key.js';
 import User from '../mongo/schemes/User.js'
 import {runGame} from './runGames.js'
 import { scoreChanged } from './events/scoreChanged.js';
+import { getFileName } from './common.js';
 
 const require = createRequire(import.meta.url)
 const config = require('../config.json')
@@ -46,9 +47,11 @@ export async function assembleSafe(req,res){
     const safeId = req.body[params.safeId]
     const codePath = `${config.paths.SAFES_CODE_PATH}${safeId}`
     const safeCode = req.body[params.safeCode]
-    const bytecodePath = `${config.paths.SAFES_COMPILED_PATH}${safeId}`
+    const bytecodeName = getFileName(safeId)
+    const bytecodePath = `${config.paths.SAFES_COMPILED_PATH}${bytecodeName}`
     const name = req.body[params.name]
     const nasmPath = config.paths.NASM_PATH
+
 
     //get the safe data
     const safe = await Safe.findById(safeId);
@@ -97,7 +100,8 @@ export async function assembleSafe(req,res){
                                 safe.safeAccepted = false;
                                 return;
                             }
-                            if(!stdout.includes(`${safe._id.toString()}`)){
+                            if(!stdout.includes(`${bytecodeName}`)){
+                                console.log(stdout,)
                                 res.send({isError:true,error:"That safe is fragile"});
                                 safe.safeAccepted = false;
                             }else{
@@ -162,7 +166,7 @@ export async function assembleKey(req,res){
     }
     const key = await getKey(userId,safeId,competition._id.toString());
     const codePath = `${keysCodePath}${key._id}`;
-    const bytecodePath = `${keysBytecodePath}${key._id.toString()}`;
+    const bytecodePath = `${keysBytecodePath}${getFileName(key._id.toString())}`;
 
     //save the key
     saveCode(keyCode,`${codePath}.asm`,async err=>{
@@ -239,7 +243,7 @@ export function downloadSafe(req,res){
     const userId = req.body[config.server.post.authParams.userId]
     const params = config.server.post.paths.getDownloadLink.params;
     const safeId = req.body[params.safeId]
-    const safeBytecodePath = `${config.paths.SAFES_COMPILED_PATH}${safeId}`
+    const safeBytecodePath = `${config.paths.SAFES_COMPILED_PATH}${getFileName(safeId)}`
 
     //check user validation
     Safe.findById(safeId)
