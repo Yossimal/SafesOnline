@@ -39,14 +39,14 @@ export async function crackSafe(req,res){
     }
     else{
         runGame(safePath,keyPath,async (error,stdout,stderr)=>{
-            console.log(stdout);
+            //console.log(stdout);
             if(error||stderr){
                 res.send({isError:true,error:"There was an error running the game. Please try again later."});
             }
             else{
                 const safe = await Safe.findById(safeId)
                 const comp = await Competition.findById(safe.competiotinId)
-                console.log(stdout);
+                //console.log(stdout);
                 if(stdout.indexOf(`${getFileName(safeId)}`)==-1){
                     res.send({isError:false,isWin:true})
                     key.keyWin = true;

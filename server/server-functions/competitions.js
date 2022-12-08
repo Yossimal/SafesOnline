@@ -156,9 +156,10 @@ export async function joinCompetition(req,res){
     }
     const comp = comps[0]
     const user = await User.findById(userId)
-    if((await Safe.find({ownerId:userId,competiotinId:comp._id})).length==0){
+    if((await Safe.find({ownerId:userId,competiotinId:comp._id})).length!==0){
         res.send({isError:true,error:"You already in that game."});
     }
+    else{
     const safe = new Safe({
         competiotinId:comp._id,
         ownerId:userId
@@ -170,6 +171,7 @@ export async function joinCompetition(req,res){
     });
     user.save();
     res.send({isError:false});
+}
 }
 
 export async function loadKeyCode(req,res){
