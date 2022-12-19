@@ -22,3 +22,5 @@
 */yarn-error.log*
 
 /poc/runner/jdk/
+server/codes
+server/config.json
