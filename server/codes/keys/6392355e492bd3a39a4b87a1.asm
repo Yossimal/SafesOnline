@@ -1,4 +1,3 @@
-
 mov bx,[100]
-mov byte [bx],0xcc
+mov word [bx],0xcccc
 l: jmp l

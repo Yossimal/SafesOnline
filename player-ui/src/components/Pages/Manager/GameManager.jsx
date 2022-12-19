@@ -45,8 +45,8 @@ export default function GameManager(){
 
     useEffect(()=>{
         setLockKeysData({
-            color:lockSafes?"secondary":"primary",
-            text:lockSafes?"Unlock keys uploads":"Lock keys uploads"
+            color:lockKeys?"secondary":"primary",
+            text:lockKeys?"Unlock keys uploads":"Lock keys uploads"
         });
     },[lockKeys])
 
@@ -117,7 +117,7 @@ export default function GameManager(){
     }
 
     function toggleLockKeys(){
-        lock("keys",!lockSafes)
+        lock("keys",!lockKeys)
             .then(res=>{
                 setLockKeys(res.status);
             })
