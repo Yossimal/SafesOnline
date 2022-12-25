@@ -63,64 +63,68 @@ export async function assembleSafe(req,res){
     else{
         //save the safe name
         safe.name = name;
-        
-        //save the safe
-        saveCode(safeCode,`${codePath}.asm`,async err=>{
-            if(err){
-                res.send({iserror:true,error:"There was an error uploading the safe code."});
-                return;
-            }
-            //get the competition data
-            const comp = await Competition.findById(safe.competiotinId)
+        //get the competition data
+        const comp = await Competition.findById(safe.competiotinId)
 
-            if (!comp.canUploadSafes) {
-                res.send({isError:true,error:"Cant upload safes now"})
-                return;
-            }
-            exec(`${nasmPath} "./${codePath}.asm"`, (error, stdout, stderr) => {
-                if (error || stderr) {
-                    res.send({isError:true,error: `${stderr.substring(stderr.indexOf('error'))}`});
-                    //console.error(error);
-                    console.error(stderr);
+        if (!comp.canUploadSafes) {
+            res.send({isError:true,error:"Cant upload safes now"})
+            return;
+        }
+        else{
+            //save the safe
+            saveCode(safeCode,`${codePath}.asm`,async err=>{
+                if(err){
+                    res.send({iserror:true,error:"There was an error uploading the safe code."});
+                    return;
+                }
+                //get the competition data
+                const comp = await Competition.findById(safe.competiotinId)
 
-                } else if (stdout) {
-                    res.send({isError:true,error: stdout});
-                } else {
-                    exec(`mv "${codePath}" "${bytecodePath}"`, (error, stdout, stderr) => {
-                        if (stderr || error) {
-                            res.send({error: "failed to save the compiled file (mverr)"})
-                            return;
-                        }
-                        const dummyKeyPath = config.paths.DUMMY_KEY
-                        runGame(dummyKeyPath,bytecodePath,(error,stdout,stderr)=>{
-                            if (error || stderr) {
-                                res.send({isError:true,error: "there was an error running the game"})
-                                console.error(error)
-                                console.error(stderr)
-                                safe.safeAccepted = false;
+                exec(`${nasmPath} "./${codePath}.asm"`, (error, stdout, stderr) => {
+                    if (error || stderr) {
+                        res.send({isError:true,error: `${stderr.substring(stderr.indexOf('error'))}`});
+                        //console.error(error);
+                        console.error(stderr);
+
+                    } else if (stdout) {
+                        res.send({isError:true,error: stdout});
+                    } else {
+                        exec(`mv "${codePath}" "${bytecodePath}"`, (error, stdout, stderr) => {
+                            if (stderr || error) {
+                                res.send({error: "failed to save the compiled file (mverr)"})
                                 return;
                             }
-                            if(!stdout.includes(`${bytecodeName}`)){
-                                console.log(stdout,)
-                                res.send({isError:true,error:"That safe is fragile"});
-                                safe.safeAccepted = false;
-                            }else{
-                                res.send({isError:false});
-                                safe.safeAccepted = true;
-                            }
-                            safe.save();
-                            //is the safe ha changed - we need to clear all the keys win status
-                            Key.updateMany({safeId:safeId},{$set:{keyWin:false}})
-                                .then(results=>{
-                                    if(results.modifiedCount>0){
-                                        scoreChanged(comp._id.toString())
-                                    }
-                                });  
+                            const dummyKeyPath = config.paths.DUMMY_KEY
+                            runGame(dummyKeyPath,bytecodePath,(error,stdout,stderr)=>{
+                                if (error || stderr) {
+                                    res.send({isError:true,error: "there was an error running the game"})
+                                    console.error(error)
+                                    console.error(stderr)
+                                    safe.safeAccepted = false;
+                                    return;
+                                }
+                                if(!stdout.includes(`${bytecodeName}`)){
+                                    console.log(stdout,)
+                                    res.send({isError:true,error:"That safe is fragile"});
+                                    safe.safeAccepted = false;
+                                }else{
+                                    res.send({isError:false});
+                                    safe.safeAccepted = true;
+                                }
+                                safe.save();
+                                //is the safe ha changed - we need to clear all the keys win status
+                                Key.updateMany({safeId:safeId},{$set:{keyWin:false}})
+                                    .then(results=>{
+                                        if(results.modifiedCount>0){
+                                            scoreChanged(comp._id.toString())
+                                        }
+                                    });  
+                            });
                         });
-                    });
-                }
+                    }
+                });
             });
-        });
+        }
     }
 }
 
@@ -156,7 +160,8 @@ export async function assembleKey(req,res){
     const keyCode = req.body[params.keyCode]
     const keysBytecodePath = config.paths.KEYS_COMPILED_PATH
     const nasmPath = config.paths.NASM_PATH;
-
+    const dummyKeyPath = resolve(config.paths.DUMMY_KEY)
+    
     const safe = await Safe.findById(safeId)
     const competition = await Competition.findById(safe.competiotinId);
     const user = await User.findById(userId);
@@ -164,66 +169,71 @@ export async function assembleKey(req,res){
         res.send({isError:true,error:"No Credentioals!"});
         return;
     }
-    const key = await getKey(userId,safeId,competition._id.toString());
-    const codePath = `${keysCodePath}${key._id}`;
-    const bytecodePath = `${keysBytecodePath}${getFileName(key._id.toString())}`;
+    else{
+        const key = await getKey(userId,safeId,competition._id.toString());
+        const codePath = `${keysCodePath}${key._id}`;
+        const bytecodePath = `${keysBytecodePath}${getFileName(key._id.toString())}`;
 
-    //save the key
-    saveCode(keyCode,`${codePath}.asm`,async err=>{
-        if(err){
-            res.send({iserror:true,error:"There was an error uploading the safe code."});
-            return;
-        }
-        //check if we can upload keys
-        if (!competition.canUploadKeys) {
-            res.send({isError:true,error:"Cant upload safes now"})
-            return;
-        }else{
-            key.keyWin = false;
-            await key.save()
-        }
-        exec(`${nasmPath} "./${codePath}.asm"`, (error, stdout, stderr) => {
-            if (error || stderr) {
-                res.send({isError:true,error: `${stderr.substring(stderr.indexOf('error'))}`});
-                //console.error(error);
-                console.error(stderr);
-
-            } else if (stdout) {
-                res.send({isError:true,error: stdout});
-            } else {
-                exec(`mv "${codePath}" "${bytecodePath}"`, (error, stdout, stderr) => {
-                    if (stderr || error) {
-                        res.send({error: "failed to save the compiled file (mverr)"})
-                        return;
-                    } 
-                });
-                //test the key with dummy key so we can know it not a master key
-                const dummyKeyPath = config.paths.DUMMY_KEY
-                runGame(dummyKeyPath,bytecodePath,(error,stdout,stderr)=>{
+        //save the key
+        saveCode(keyCode,`${codePath}.asm`,async err=>{
+            if(err){
+                res.send({iserror:true,error:"There was an error uploading the safe code."});
+                return;
+            }
+            //check if we can upload keys
+            if (!competition.canUploadKeys) {
+                res.send({isError:true,error:"Cant upload safes now"})
+                return;
+            }else{
+                key.keyWin = false;
+                await key.save()
+            
+                exec(`${nasmPath} "./${codePath}.asm"`, (error, stdout, stderr) => {
                     if (error || stderr) {
-                        res.send({isError:true,error: "there was an error running the game"})
-                        console.error(error)
-                        console.error(stderr)
-                        return;
-                    }
-                    else if(!stdout.includes(`dummy`)){
-                        res.send({isError:true,error:"That key is illegal"});
-                    }else{
-                        key.keyWin = false;
-                        key.keyAccepted = true
-                        key.save().then(k=>{
-                            Competition.findById(safe.competiotinId)
-                                .then(comp=>{
-                                    scoreChanged(comp._id.toString())
-                                })
-                        })
-                        res.send({isError:false})
+                        res.send({isError:true,error: `${stderr.substring(stderr.indexOf('error'))}`});
+                        //console.error(error);
+                        console.error(stderr);
+
+                    } else if (stdout) {
+                        res.send({isError:true,error: stdout});
+                    } else {
+                        exec(`mv "${codePath}" "${bytecodePath}"`, (error, stdout, stderr) => {
+                            if (stderr || error) {
+                                res.send({error: "failed to save the compiled file (mverr)"})
+                                return;
+                            } 
+                            else{
+                                runGame(dummyKeyPath,bytecodePath,(error,stdout,stderr)=>{
+                                    if (error || stderr) {
+                                        res.send({isError:true,error: "there was an error running the game"})
+                                        console.error(error)
+                                        console.error(stderr)
+                                        return;
+                                    }
+                                    else if(!stdout.includes(`dummy`)){
+                                        res.send({isError:true,error:"That key is illegal"});
+                                    }else{
+                                        key.keyWin = false;
+                                        key.keyAccepted = true
+                                        key.save().then(k=>{
+                                            Competition.findById(safe.competiotinId)
+                                                .then(comp=>{
+                                                    scoreChanged(comp._id.toString())
+                                                })
+                                        })
+                                            res.send({isError:false})
+                                    }
+                                });
+                            }
+                        });
+                        //test the key with dummy key so we can know it not a master key
+
+                        
                     }
                 });
-                
             }
         });
-    });
+    }
 }
 
 export async function getKey(userId,safeId){
