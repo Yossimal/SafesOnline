@@ -66,7 +66,7 @@ export default function Register(){
                     window.alert(res.error)
                 }
                 else{
-                    navigate('..',{relative:true})
+                    navigate('/?msg=check your email to activate your account',{replace:true})
                 }
             });
 

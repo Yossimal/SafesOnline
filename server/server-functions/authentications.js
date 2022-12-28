@@ -47,6 +47,7 @@ export function register(req,res){
             return;
         }else{
             sendConfirmEmail(user._id,user.email)
+            res.send({isError:false,status:"email sent"})
         }
 
     });

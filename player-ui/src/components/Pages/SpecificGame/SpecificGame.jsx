@@ -193,8 +193,7 @@ export default function SpecificGame(){
                             <Row>
                                 <Col>
                                 <div className="mb-2">
-                                    {/* <Button onClick={crackedSafeId==null?saveSafe:saveKey} size="md" variant="success">Save</Button>{' '} */}
-                                    <Button onClick={crackedSafeId==null?assembleSafe:assembleKey} size="md">Save and Assemble</Button>{' '}
+                                    <Button onClick={crackedSafeId==null?assembleSafe:assembleKey} size="md">Upload {crackedSafeId==null?"Safe":"Key"}</Button>{' '}
                                     {crackedSafeId!=null&&<Button variant="secondary" onClick={crackSafe} size="md">Run</Button>}{' '}
                                     {crackedSafeId!=null&&<Button variant="dark" onClick={editSafe} size="md">Continue editing my safe</Button>}
                                 </div>
