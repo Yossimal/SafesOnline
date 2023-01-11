@@ -452,7 +452,9 @@ export async function loadScores(compId){
     const safes = await Safe.find({competiotinId:compId});
     const scores = await Promise.all(safes.map(async safe=>{
         const badKeys = await Key.find({safeId:safe._id,keyWin:true});
-        const goodKeys = await Key.find({ownerId:safe.ownerId,keyWin:true,safeId:safe._id});
+	const safesIds = safes.map(s=>s._id)
+        let goodKeys = await Key.find({ownerId:safe.ownerId,keyWin:true,safeId:{$in:safesIds}});
+	//goodKeys = goodKeys.filter(k=>safes.filter(s=>k.safeId==s._id).length>0);
         const result={};
         const safeKey = goodKeys.find(k=>k.safeId.toString()==safe._id.toString());
         result.safeName = safe.name;

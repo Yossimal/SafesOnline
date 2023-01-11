@@ -1,5 +1,5 @@
-export const serverUrl = "http://localhost:8080";
-export const clientUrl = "http://localhost:3000";
+export const serverUrl = "http://20.23.240.174:8080";
+export const clientUrl = "http://20.23.240.174:3000";
 export const pagesPaths = {
     login:'/',
     register:'/register',
