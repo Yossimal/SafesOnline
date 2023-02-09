@@ -16,9 +16,9 @@ export function $privateSocket(func){
 
 function privateFunc(func,req,res){
     const params = config.server.post.paths.getUserProfile.params;
-    const token = req.body[params.token];
+    const authToken = req.body[params.token];
     const userId = req.body[params.userId];
-    checkToken(userId,token)
+    checkToken(userId,authToken)
     .then(ok=>{
         if(!ok){
             res.send({isError:true,error:"You need to login again!",badToken:true})
@@ -31,9 +31,9 @@ function privateFunc(func,req,res){
 
 function privateSocketFunction(func,socket){
     const params = config.server.socket.authParams
-    const token = socket.handshake.query[params.token]
+    const authToken = socket.handshake.query[params.token]
     const userId = socket.handshake.query[params.userId]
-    checkToken(userId,token)
+    checkToken(userId,authToken)
         .then(ok=>{
             if(!ok){
                 socket.send({isError:true,error:"auth error"})
